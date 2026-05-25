@@ -299,7 +299,20 @@ body {
   border-bottom: 1px solid var(--border);
   background: var(--bg2);
 }
+.band-tbl th.col-active {
+  color: var(--ink); font-weight: 600; letter-spacing: 1px;
+  background: var(--bg3);
+  border-bottom: 2px solid var(--accent);
+}
+.band-tbl th .col-now {
+  display: inline-block; margin-left: 4px;
+  font-size: 7px; padding: 1px 5px; border-radius: 99px;
+  background: var(--accent); color: #fff; letter-spacing: 0;
+  vertical-align: middle; font-weight: 700;
+}
 .band-tbl td { padding: 4px 6px; border-bottom: 1px solid var(--bg3); vertical-align: middle; }
+.band-tbl td.col-active { background: rgba(0,87,255,0.04); }
+body.dark-mode .band-tbl td.col-active { background: rgba(77,159,255,0.06); }
 .band-tbl tr:last-child td { border-bottom: none; }
 .band-tbl tr:hover td { background: var(--bg2); }
 .band-name { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--ink); }
@@ -699,9 +712,6 @@ body {
   .solar-val { font-size: 28px; }
 
   /* ── BAND TABLE ─────────────────────────────────────────────────── */
-  /* Hide night column on narrow screens */
-  .band-tbl th:nth-child(3),
-  .band-tbl td:nth-child(3) { display: none; }
   .bar-wrap { width: 50px; }
 
   /* ── K-INDEX GAUGE ──────────────────────────────────────────────── */
@@ -751,6 +761,95 @@ body {
   .spot-tbl td:nth-child(6) { display: none; }
   #worldClocks { grid-template-columns: 1fr; }
 }
+/* ── INSTRUCTIONS MODAL ──────────────────────────────────────────────── */
+.help-backdrop {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(10,15,25,0.85);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.help-backdrop.hidden { display: none; }
+
+.help-modal {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+  width: 100%; max-width: 560px;
+  max-height: 88vh;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  animation: wzIn 0.25s cubic-bezier(.22,.68,0,1.2);
+}
+.help-header {
+  background: var(--ink);
+  padding: 20px 24px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.help-title {
+  font-family: 'Bebas Neue', sans-serif; font-size: 26px;
+  letter-spacing: 4px; color: #FFD700; line-height: 1;
+}
+.help-subtitle {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  color: rgba(255,215,0,0.55); letter-spacing: 2px; margin-top: 3px;
+}
+.help-close {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.3);
+  color: #FFD700; font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s; flex-shrink: 0; line-height: 1;
+}
+.help-close:hover { background: rgba(255,215,0,0.25); }
+
+.help-body {
+  padding: 0 24px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+.help-body::-webkit-scrollbar { width: 4px; }
+.help-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+.help-section { padding-top: 22px; }
+.help-section-title {
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 600;
+  color: #FFD700; letter-spacing: 2.5px; text-transform: uppercase;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,215,0,0.2);
+  margin-bottom: 12px;
+}
+.help-row {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--bg3);
+}
+.help-row:last-child { border-bottom: none; }
+.help-icon {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 13px;
+}
+.help-row-text { flex: 1; }
+.help-row-label {
+  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600;
+  color: var(--ink); letter-spacing: 0.5px; margin-bottom: 2px;
+}
+.help-row-desc {
+  font-size: 11px; color: var(--ink3); line-height: 1.5;
+}
+.help-tip {
+  background: rgba(255,215,0,0.06);
+  border: 1px solid rgba(255,215,0,0.18);
+  border-radius: var(--r); padding: 10px 14px; margin-top: 18px;
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  color: rgba(255,215,0,0.75); line-height: 1.6;
+}
+.help-tip strong { color: #FFD700; }
+
 /* ── SETUP WIZARD ────────────────────────────────────────────────────── */
 .wizard-backdrop {
   position: fixed; inset: 0; z-index: 10000;
@@ -830,18 +929,72 @@ body {
   color: #c0392b; text-align: center; min-height: 14px;
 }
 
-/* ── HEADER UTILITY BUTTONS ──────────────────────────────────────────── */
-.header-utils {
-  position: absolute; top: 12px; right: 16px;
-  display: flex; gap: 8px; align-items: center; z-index: 10;
+/* ── GEAR MENU ────────────────────────────────────────────────────────── */
+.gear-wrap {
+  position: absolute; top: 14px; right: 18px; z-index: 200;
 }
-.util-btn {
-  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px;
-  padding: 4px 10px; border-radius: 99px; cursor: pointer;
-  border: 1px solid rgba(255,215,0,0.35); background: rgba(255,215,0,0.08);
-  color: rgba(255,215,0,0.7); transition: all 0.15s; white-space: nowrap;
+
+.gear-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: rgba(255,215,0,0.1);
+  border: 1.5px solid rgba(255,215,0,0.4);
+  color: #FFD700;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, transform 0.3s;
+  padding: 0;
+  flex-shrink: 0;
 }
-.util-btn:hover { background: rgba(255,215,0,0.18); color: #FFD700; border-color: #FFD700; }
+.gear-btn:hover { background: rgba(255,215,0,0.2); border-color: #FFD700; }
+.gear-btn.open  { transform: rotate(60deg); }
+.gear-btn svg   { width: 18px; height: 18px; stroke: #FFD700; flex-shrink: 0; }
+
+.gear-menu {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  min-width: 200px;
+  background: #181208;
+  border: 1px solid rgba(255,215,0,0.3);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+  overflow: hidden;
+  display: none;
+  animation: menuDrop 0.18s ease;
+  z-index: 300;
+}
+.gear-menu.open { display: block; }
+@keyframes menuDrop {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+.gear-menu-header {
+  padding: 10px 14px 8px;
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  color: rgba(255,215,0,0.4); letter-spacing: 2px; text-transform: uppercase;
+  border-bottom: 1px solid rgba(255,215,0,0.12);
+}
+
+.gear-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 16px;
+  font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.5px;
+  color: rgba(255,215,0,0.8);
+  cursor: pointer;
+  border: none; background: transparent; width: 100%; text-align: left;
+  transition: background 0.12s, color 0.12s;
+  border-bottom: 1px solid rgba(255,215,0,0.07);
+}
+.gear-item:last-child { border-bottom: none; }
+.gear-item:hover { background: rgba(255,215,0,0.1); color: #FFD700; }
+.gear-item svg  { width: 15px; height: 15px; stroke: currentColor; flex-shrink: 0; opacity: 0.8; }
+.gear-item-label { flex: 1; }
+.gear-item-badge {
+  font-size: 9px; padding: 1px 7px; border-radius: 99px;
+  background: rgba(255,215,0,0.12); border: 1px solid rgba(255,215,0,0.25);
+  color: rgba(255,215,0,0.6); letter-spacing: 0.5px;
+}
+
 
 /* Dark mode body override */
 body.dark-mode {
@@ -868,6 +1021,12 @@ body.dark-mode {
   --teal:      #39c5cf;
   --teal-lt:   #051e22;
 }
+
+/* Dark mode: top banner, ticker and footer all go pure black */
+body.dark-mode .header,
+body.dark-mode .ticker-bar,
+body.dark-mode .footer-bar,
+body.dark-mode .gear-menu { background: #000000; }
 
 </style>
 </head>
@@ -911,14 +1070,201 @@ body.dark-mode {
   </div>
 </div>
 
+<!-- ══ INSTRUCTIONS MODAL ══════════════════════════════════════════════════ -->
+<div class="help-backdrop hidden" id="helpBackdrop" onclick="onHelpBackdropClick(event)">
+  <div class="help-modal">
+
+    <div class="help-header">
+      <div>
+        <div class="help-title">INSTRUCTIONS</div>
+        <div class="help-subtitle">HAMCLOCK IMPROVED · BY W7CTY</div>
+      </div>
+      <button class="help-close" onclick="closeHelp()">✕</button>
+    </div>
+
+    <div class="help-body">
+
+      <!-- Getting Started -->
+      <div class="help-section">
+        <div class="help-section-title">⚡ Getting Started</div>
+        <div class="help-row">
+          <div class="help-icon">📡</div>
+          <div class="help-row-text">
+            <div class="help-row-label">Enter Your Callsign</div>
+            <div class="help-row-desc">Type your amateur radio callsign into the CALLSIGN field in the top banner. It will appear as your station label on the map.</div>
+          </div>
+        </div>
+        <div class="help-row">
+          <div class="help-icon">🗺️</div>
+          <div class="help-row-text">
+            <div class="help-row-label">Enter Your Grid Square</div>
+            <div class="help-row-desc">Type your Maidenhead grid square (e.g. FN31 or FN31pr) into the GRID SQUARE field. The map will instantly center on your location and your GPS coordinates will be calculated automatically. Not sure of your grid? Open ⚙ → My Station Settings for a link to QRZ Grid Mapper.</div>
+          </div>
+        </div>
+        <div class="help-row">
+          <div class="help-icon">💾</div>
+          <div class="help-row-text">
+            <div class="help-row-label">Settings Are Saved</div>
+            <div class="help-row-desc">Your callsign, grid square, and theme preference are remembered in your browser. You will not need to re-enter them next time you open HamClock Improved.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Solar & HF Conditions -->
+      <div class="help-section">
+        <div class="help-section-title">☀️ Solar & HF Conditions</div>
+        <div class="help-row">
+          <div class="help-icon">🔢</div>
+          <div class="help-row-text">
+            <div class="help-row-label">SFI (Solar Flux Index)</div>
+            <div class="help-row-desc">A measure of solar radio emission at 10.7 cm. Higher SFI (above 150) means better HF propagation, especially on the higher bands (15m, 10m). Below 70 indicates poor conditions.</div>
+          </div>
+        </div>
+        <div class="help-row">
+          <div class="help-icon">🌡️</div>
+          <div class="help-row-text">
+            <div class="help-row-label">K-Index &amp; A-Index</div>
+            <div class="help-row-desc">Measure geomagnetic disturbance. K=0–2 is Quiet (best HF). K=3–4 is Unsettled. K=5+ is a geomagnetic storm which can degrade or black out HF propagation, especially on polar paths.</div>
+          </div>
+        </div>
+        <div class="help-row">
+          <div class="help-icon">📊</div>
+          <div class="help-row-text">
+            <div class="help-row-label">HF Band Conditions</div>
+            <div class="help-row-desc">Shows propagation quality for each HF band from 160m to 6m. The highlighted column (☀ DAY or 🌙 NIGHT with a NOW badge) shows current conditions. Day and night conditions can differ significantly — 40m and 80m often open at night while 15m and 10m perform best during the day.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map -->
+      <div class="help-section">
+        <div class="help-section-title">🗺️ Propagation Map</div>
+        <div class="help-row">
+          <div class="help-icon">🔍</div>
+          <div class="help-row-text">
+            <div class="help-row-label">Zoom &amp; Pan</div>
+            <div class="help-row-desc">Use the +/− buttons, scroll wheel, or pinch-to-zoom on touch screens. The map uses the National Geographic tile layer. Your station is centered on your grid square.</div>
+          </div>
+        </div>
+        <div class="help-row">
+          <div class="help-icon">🌗</div>
+          <div class="help-row-text">
+            <div class="help-row-label">Gray Line</div>
+            <div class="help-row-desc">The amber curve and dark shading show the day/night terminator in real time. The gray line (the boundary between day and night) is one of the best times for long-distance HF propagation — particularly on 40m and 80m.</div>
+          </div>
+        </div>
+        <div class="help-row">
+          <div class="help-icon">↗️</div>
+          <div class="help-row-text">
+            <div class="help-row-label">DX Paths &amp; Grid Square</div>
+            <div class="help-row-desc">Dashed lines show great-circle paths from your station to active DX beacons. The blue dashed box shows your Maidenhead grid square boundaries. Use the floating map buttons to toggle any layer on or off, or ⊙ RECENTER to return to your station.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DX Spots -->
+      <div class="help-section">
+        <div class="help-section-title">📻 DX Cluster Spots</div>
+        <div class="help-row">
+          <div class="help-icon">🔎</div>
+          <div class="help-row-text">
+            <div class="help-row-label">Filtering Spots</div>
+            <div class="help-row-desc">Use the toolbar buttons to filter by band (ALL, 160M–6M) or mode category (DX SPOTS, FT8/FT4, CW). New spots flash briefly when they appear. The spot count and DXCC entity count are shown in the panel header.</div>
+          </div>
+        </div>
+        <div class="help-row">
+          <div class="help-icon">📶</div>
+          <div class="help-row-text">
+            <div class="help-row-label">SNR Column</div>
+            <div class="help-row-desc">Signal-to-noise ratio reported by the spotter. Green (+) values indicate a strong signal above noise; red (−) values indicate the signal is below the noise floor. Useful for FT8/FT4 where negative SNR is normal.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QSO Logger -->
+      <div class="help-section">
+        <div class="help-section-title">📝 Quick QSO Logger</div>
+        <div class="help-row">
+          <div class="help-icon">✍️</div>
+          <div class="help-row-text">
+            <div class="help-row-label">Logging a Contact</div>
+            <div class="help-row-desc">Enter the DX callsign, frequency in MHz, mode, and RST sent/received (format: 599/579). Select an Operation Type if applicable — POTA, SOTA, Field Day, or Other (with a free-text description). Press LOG QSO or hit Enter.</div>
+          </div>
+        </div>
+        <div class="help-row">
+          <div class="help-icon">📟</div>
+          <div class="help-row-text">
+            <div class="help-row-label">Digital Voice Modes</div>
+            <div class="help-row-desc">The mode dropdown includes DMR, D-STAR, and C4FM under Digital Voice, plus FM. For digital voice QSOs the RST field is typically not used — you can enter 59/59 or leave it blank.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings & Sharing -->
+      <div class="help-section">
+        <div class="help-section-title">⚙️ Settings &amp; Sharing</div>
+        <div class="help-row">
+          <div class="help-icon">🌙</div>
+          <div class="help-row-text">
+            <div class="help-row-label">Dark Mode</div>
+            <div class="help-row-desc">Toggle between light and dark themes via the gear menu. Your preference is saved and restored automatically.</div>
+          </div>
+        </div>
+        <div class="help-row">
+          <div class="help-icon">🔗</div>
+          <div class="help-row-text">
+            <div class="help-row-label">Share This App</div>
+            <div class="help-row-desc">The Share button generates a link that includes your callsign and grid square. Anyone opening the link will see your station view. On mobile it opens the native share sheet.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="help-tip">
+        <strong>73 de W7CTY</strong> — HamClock Improved is free to use and share.<br>
+        Contact: <a href="mailto:w7cty@outlook.com" style="color:#FFD700;">w7cty@outlook.com</a>
+      </div>
+
+    </div><!-- /help-body -->
+  </div><!-- /help-modal -->
+</div><!-- /helpBackdrop -->
+
 <!-- ══ HEADER ══════════════════════════════════════════════════════════════ -->
 <header class="header" style="position:relative;">
 
-  <!-- Utility buttons top-right -->
-  <div class="header-utils">
-    <button class="util-btn" onclick="toggleDarkMode()" id="themeBtn" title="Toggle dark/light mode">🌙 DARK</button>
-    <button class="util-btn" onclick="shareApp()" title="Share this app">⬆ SHARE</button>
-    <button class="util-btn" onclick="openWizard()" title="Change callsign / grid square">⚙ SETTINGS</button>
+  <!-- Gear menu -->
+  <div class="gear-wrap" id="gearWrap">
+    <button class="gear-btn" id="gearBtn" onclick="toggleGearMenu()" aria-label="Settings menu" title="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33
+                 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33
+                 l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0
+                 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06
+                 A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51
+                 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65
+                 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+    <div class="gear-menu" id="gearMenu">
+      <div class="gear-menu-header">HAMCLOCK IMPROVED</div>
+      <button class="gear-item" onclick="toggleDarkMode();closeGearMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span class="gear-item-label" id="themeLabel">Dark Mode</span>
+        <span class="gear-item-badge" id="themeState">OFF</span>
+      </button>
+      <button class="gear-item" onclick="shareApp();closeGearMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        <span class="gear-item-label">Share This App</span>
+      </button>
+      <button class="gear-item" onclick="openWizard();closeGearMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="gear-item-label">My Station Settings</span>
+      </button>
+      <button class="gear-item" onclick="openHelp();closeGearMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span class="gear-item-label">Instructions</span>
+      </button>
+    </div>
   </div>
 
   <!-- Logo row — centered -->
@@ -1059,11 +1405,15 @@ body.dark-mode {
       <div class="panel-head">
         <div class="panel-dot" style="background:var(--green)"></div>
         <span class="panel-title">HF BAND CONDITIONS</span>
+        <span class="panel-badge" id="bandTimeLabel">—</span>
       </div>
       <div class="panel-body" style="padding:0;">
         <table class="band-tbl">
-          <thead><tr>
-            <th>BAND</th><th>DAY</th><th>NIGHT</th><th>MUF</th>
+          <thead><tr id="bandTblHead">
+            <th>BAND</th>
+            <th id="thDay">DAY</th>
+            <th id="thNight">NIGHT</th>
+            <th>MUF</th>
           </tr></thead>
           <tbody id="bandBody"></tbody>
         </table>
@@ -1581,24 +1931,53 @@ function qualityOf(q) {
 }
 
 function renderBands() {
-  const kF = Math.max(0, 1 - SOLAR.k * 0.10);
+  const kF   = Math.max(0, 1 - SOLAR.k * 0.10);
   const sfiF = SOLAR.sfi / 145;
-  const now = new Date();
-  const h = now.getUTCHours();
+  const now  = new Date();
+  const utcH = now.getUTCHours();
+
+  // Determine if it is currently day or night at operator's location
+  // Use a simple sunrise/sunset window based on UTC time
+  // Day = roughly 06:00–18:00 UTC for mid-latitude (refined by calcSunTimes)
+  const isNight = utcH < 6 || utcH >= 18;
+
+  // Update column header highlights
+  const thDay   = document.getElementById('thDay');
+  const thNight = document.getElementById('thNight');
+  if (thDay && thNight) {
+    if (isNight) {
+      thDay.className   = '';
+      thNight.className = 'col-active';
+      thDay.innerHTML   = '☀ DAY';
+      thNight.innerHTML = '🌙 NIGHT <span class="col-now">NOW</span>';
+    } else {
+      thDay.className   = 'col-active';
+      thNight.className = '';
+      thDay.innerHTML   = '☀ DAY <span class="col-now">NOW</span>';
+      thNight.innerHTML = '🌙 NIGHT';
+    }
+  }
+
+  // Update panel badge
+  const badge = document.getElementById('bandTimeLabel');
+  if (badge) badge.textContent = isNight ? '🌙 NIGHT CONDITIONS ACTIVE' : '☀ DAY CONDITIONS ACTIVE';
 
   document.getElementById('bandBody').innerHTML = BANDS.map(b => {
     const dq = Math.min(1, b.dq * sfiF * kF + (Math.random() - 0.5) * 0.05);
-    const nq = Math.min(1, b.nq * kF       + (Math.random() - 0.5) * 0.05);
+    const nq = Math.min(1, b.nq * kF        + (Math.random() - 0.5) * 0.05);
     const [dc, dl] = qualityOf(dq);
     const [nc, nl] = qualityOf(nq);
 
+    const dayActiveClass   = !isNight ? ' col-active' : '';
+    const nightActiveClass = isNight  ? ' col-active' : '';
+
     return `<tr>
       <td><span class="band-name">${b.n}</span></td>
-      <td>
+      <td class="${dayActiveClass}">
         <div class="bar-wrap"><div class="bar-fill bar-${dc}" style="width:${Math.round(dq*100)}%"></div></div>
         <span class="pill pill-${dc}">${dl}</span>
       </td>
-      <td>
+      <td class="${nightActiveClass}">
         <div class="bar-wrap"><div class="bar-fill bar-${nc}" style="width:${Math.round(nq*100)}%"></div></div>
         <span class="pill pill-${nc}">${nl}</span>
       </td>
@@ -2136,10 +2515,51 @@ document.getElementById('wizardBackdrop').addEventListener('click', function(e) 
   });
 });
 
+// ── INSTRUCTIONS MODAL ────────────────────────────────────────────────────────
+function openHelp() {
+  document.getElementById('helpBackdrop').classList.remove('hidden');
+}
+
+function closeHelp() {
+  document.getElementById('helpBackdrop').classList.add('hidden');
+}
+
+function onHelpBackdropClick(e) {
+  if (e.target.id === 'helpBackdrop') closeHelp();
+}
+
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeHelp();
+    closeGearMenu();
+  }
+});
+
+// ── GEAR MENU ─────────────────────────────────────────────────────────────────
+function toggleGearMenu() {
+  const menu = document.getElementById('gearMenu');
+  const btn  = document.getElementById('gearBtn');
+  const open = menu.classList.toggle('open');
+  btn.classList.toggle('open', open);
+}
+
+function closeGearMenu() {
+  document.getElementById('gearMenu').classList.remove('open');
+  document.getElementById('gearBtn').classList.remove('open');
+}
+
+// Close gear menu when clicking anywhere outside it
+document.addEventListener('click', function(e) {
+  const wrap = document.getElementById('gearWrap');
+  if (wrap && !wrap.contains(e.target)) closeGearMenu();
+});
+
 // ── DARK MODE TOGGLE ──────────────────────────────────────────────────────────
 function toggleDarkMode() {
   const isDark = document.body.classList.toggle('dark-mode');
-  document.getElementById('themeBtn').textContent = isDark ? '☀ LIGHT' : '🌙 DARK';
+  const state  = document.getElementById('themeState');
+  if (state) state.textContent = isDark ? 'ON' : 'OFF';
   try { localStorage.setItem('hci_dark', isDark ? '1' : '0'); } catch(e) {}
   if (map) { setTimeout(() => map.invalidateSize(), 50); }
 }
@@ -2196,7 +2616,8 @@ function init() {
   // Restore dark mode
   if (prefs.dark) {
     document.body.classList.add('dark-mode');
-    document.getElementById('themeBtn').textContent = '☀ LIGHT';
+    const state = document.getElementById('themeState');
+    if (state) state.textContent = 'ON';
   }
 
   // Show wizard if first visit (and not arriving via shared link)
