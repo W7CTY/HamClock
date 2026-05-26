@@ -40,6 +40,7 @@
   --shadow-md: 0 4px 12px rgba(15,25,35,0.10), 0 2px 4px rgba(15,25,35,0.06);
   --shadow-lg: 0 8px 24px rgba(15,25,35,0.12), 0 4px 8px rgba(15,25,35,0.06);
   --r:         6px;
+  --font-scale: 1;          /* adjustable via Settings: 1/1.15/1.3/1.5/1.75/2.0 */
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -48,10 +49,170 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
+  font-size: calc(13px * var(--font-scale));
   min-height: 100vh;
   line-height: 1.4;
 }
+
+/* ── EXPANDED MAP ─────────────────────────────────────────────────────── */
+#leafletMap { width: 100%; height: 360px; background: #dce8f4; transition: height 0.35s ease; }
+#leafletMap.map-expanded { height: 620px; }
+
+/* ── QRZ LOGIN MODAL ─────────────────────────────────────────────────── */
+.qrz-backdrop {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(10,15,25,0.80); backdrop-filter: blur(5px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.qrz-backdrop.hidden { display: none; }
+.qrz-modal {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 10px; box-shadow: var(--shadow-lg);
+  width: 100%; max-width: 420px; overflow: hidden;
+  animation: wzIn 0.25s cubic-bezier(.22,.68,0,1.2);
+}
+.qrz-modal-head {
+  background: #c8102e; padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.qrz-modal-title {
+  font-family: 'Bebas Neue', sans-serif; font-size: 22px;
+  letter-spacing: 3px; color: #fff;
+}
+.qrz-modal-sub {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  color: rgba(255,255,255,0.6); letter-spacing: 2px; margin-top: 2px;
+}
+.qrz-close {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(255,255,255,0.15); border: none;
+  color: #fff; font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.qrz-close:hover { background: rgba(255,255,255,0.28); }
+.qrz-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.qrz-field { display: flex; flex-direction: column; gap: 5px; }
+.qrz-label {
+  font-family: 'DM Mono', monospace; font-size: 9px; color: var(--ink3);
+  letter-spacing: 1.5px; text-transform: uppercase;
+}
+.qrz-input {
+  width: 100%; font-family: 'DM Mono', monospace; font-size: 13px;
+  background: var(--bg2); border: 1px solid var(--border);
+  color: var(--ink); padding: 8px 12px; border-radius: var(--r); outline: none;
+  transition: border-color 0.2s;
+}
+.qrz-input:focus { border-color: #c8102e; background: var(--bg); }
+.qrz-info {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 9px 12px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  color: var(--ink3); line-height: 1.7;
+}
+.qrz-info a { color: var(--accent); }
+.qrz-status {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  text-align: center; min-height: 16px;
+}
+.qrz-status.ok   { color: var(--green); }
+.qrz-status.err  { color: var(--red);   }
+.qrz-status.busy { color: var(--yellow); }
+.qrz-footer {
+  padding: 0 20px 20px;
+  display: flex; gap: 8px; justify-content: flex-end;
+}
+.qrz-btn {
+  padding: 9px 18px; font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: 1px; border-radius: var(--r); cursor: pointer;
+  transition: all 0.15s; text-transform: uppercase; border: none;
+}
+.qrz-btn-primary   { background: #c8102e; color: #fff; }
+.qrz-btn-primary:hover   { background: #a00d24; }
+.qrz-btn-primary:disabled { background: var(--border2); cursor: not-allowed; }
+.qrz-btn-secondary { background: var(--bg2); color: var(--ink2); border: 1px solid var(--border); }
+.qrz-btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+/* QRZ badge in log panel */
+.qrz-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 1px;
+  padding: 2px 8px; border-radius: 99px; cursor: pointer;
+  border: 1px solid; transition: all 0.15s; margin-left: auto;
+}
+.qrz-badge.off  { background: var(--bg3); color: var(--ink3); border-color: var(--border); }
+.qrz-badge.on   { background: #fdecea; color: #c8102e; border-color: #c8102e; }
+.qrz-badge:hover { opacity: 0.8; }
+
+/* QSO upload button */
+.log-btn-qrz {
+  width: 100%; padding: 7px;
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px;
+  background: #c8102e; border: none; color: #fff;
+  border-radius: var(--r); cursor: pointer; transition: all 0.15s;
+  margin-top: 4px; text-transform: uppercase; display: flex;
+  align-items: center; justify-content: center; gap: 5px;
+}
+.log-btn-qrz:hover { background: #a00d24; }
+.log-btn-qrz:disabled { background: var(--border2); cursor: not-allowed; }
+
+/* ── WORLD CLOCK SELECTOR ────────────────────────────────────────────── */
+.clock-edit-btn {
+  margin-left: auto; font-family: 'DM Mono', monospace; font-size: 8px;
+  color: var(--ink3); cursor: pointer; padding: 2px 6px;
+  border: 1px solid var(--border); border-radius: var(--r);
+  background: var(--bg2); transition: all 0.15s;
+}
+.clock-edit-btn:hover { border-color: var(--accent); color: var(--accent); }
+.clock-selector { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; }
+.clock-sel-row { display: flex; align-items: center; gap: 6px; }
+.clock-sel-label {
+  font-family: 'DM Mono', monospace; font-size: 9px; color: var(--ink3);
+  min-width: 28px;
+}
+.clock-sel-input {
+  flex: 1; font-family: 'DM Mono', monospace; font-size: 10px;
+  background: var(--bg2); border: 1px solid var(--border);
+  color: var(--ink); padding: 4px 8px; border-radius: var(--r); outline: none;
+}
+.clock-sel-input:focus { border-color: var(--accent); }
+.clock-sel-apply {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.5px;
+  background: var(--accent); color: #fff; border: none;
+  border-radius: var(--r); padding: 4px 10px; cursor: pointer; margin-top: 4px;
+}
+
+/* ── FONT SIZE STEPS ─────────────────────────────────────────────────── */
+body.fs-normal   { --font-scale: 1;    }
+body.fs-large    { --font-scale: 1.15; }
+body.fs-xlarge   { --font-scale: 1.3;  }
+body.fs-xxlarge  { --font-scale: 1.5;  }
+body.fs-xxxlarge { --font-scale: 1.75; }
+body.fs-huge     { --font-scale: 2.0;  }
+
+/* PSKReporter status bar inside map panel */
+.pskr-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 12px;
+  background: var(--bg2); border-top: 1px solid var(--border);
+  font-family: 'DM Mono', monospace; font-size: 9px; color: var(--ink3);
+}
+.pskr-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.pskr-dot.live    { background: var(--green); box-shadow: 0 0 4px var(--green); }
+.pskr-dot.loading { background: var(--yellow); }
+.pskr-dot.off     { background: var(--border2); }
+.pskr-count { color: var(--accent); font-weight: 600; }
+
+/* Gear menu font size picker */
+.fs-picker { display: flex; gap: 4px; padding: 6px 16px 10px; }
+.fs-btn {
+  flex: 1; padding: 5px 0;
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.5px;
+  background: var(--bg2); color: var(--ink2);
+  border: 1px solid var(--border); border-radius: var(--r);
+  cursor: pointer; transition: all 0.15s; text-align: center;
+}
+.fs-btn:hover  { border-color: var(--accent); color: var(--accent); }
+.fs-btn.active { background: var(--accent-lt); border-color: var(--accent); color: var(--accent); font-weight: 600; }
 
 /* ── HEADER ─────────────────────────────────────────────────────────── */
 .header {
@@ -388,7 +549,6 @@ body.dark-mode .band-tbl td.col-active { background: rgba(77,159,255,0.06); }
 
 /* ── MAP ─────────────────────────────────────────────────────────────── */
 .map-wrap { position: relative; border-radius: 0 0 var(--r) var(--r); overflow: hidden; }
-#leafletMap { width: 100%; height: 360px; background: #dce8f4; }
 
 /* Leaflet control overrides to match app theme */
 .leaflet-control-zoom a {
@@ -437,7 +597,7 @@ body.dark-mode .band-tbl td.col-active { background: rgba(77,159,255,0.06); }
 .legend-line { width: 16px; height: 2px; flex-shrink: 0; }
 
 /* ── SPOTS TABLE ─────────────────────────────────────────────────────── */
-.spot-wrap { max-height: 260px; overflow-y: auto; }
+.spot-wrap { max-height: 500px; overflow-y: auto; }
 .spot-wrap::-webkit-scrollbar { width: 4px; }
 .spot-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
 .spot-tbl { width: 100%; border-collapse: collapse; }
@@ -1252,6 +1412,30 @@ body.dark-mode .gear-menu { background: #000000; }
         <span class="gear-item-label" id="themeLabel">Dark Mode</span>
         <span class="gear-item-badge" id="themeState">OFF</span>
       </button>
+      <!-- Font size picker -->
+      <div class="gear-item" style="flex-direction:column;align-items:flex-start;gap:6px;cursor:default;">
+        <div style="display:flex;align-items:center;gap:8px;width:100%;">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" width="15" height="15"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+          <span class="gear-item-label">Font Size</span>
+        </div>
+        <div class="fs-picker">
+          <button class="fs-btn active" id="fsN"   onclick="setFontSize('normal',this)"  title="100%">A</button>
+          <button class="fs-btn"        id="fsL"   onclick="setFontSize('large',this)"   title="115%">A+</button>
+          <button class="fs-btn"        id="fsXL"  onclick="setFontSize('xlarge',this)"  title="130%">A++</button>
+          <button class="fs-btn"        id="fsXXL" onclick="setFontSize('xxlarge',this)" title="150%">A+++</button>
+          <button class="fs-btn"        id="fsXXXL"onclick="setFontSize('xxxlarge',this)"title="175%">A+4</button>
+          <button class="fs-btn"        id="fsHuge"onclick="setFontSize('huge',this)"    title="200%">A+5</button>
+        </div>
+      </div>
+      <button class="gear-item" onclick="toggleMapExpand();closeGearMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+        <span class="gear-item-label" id="mapExpandLabel">Expand Map</span>
+      </button>
+      <button class="gear-item" onclick="openQrzModal();closeGearMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
+        <span class="gear-item-label">QRZ Login &amp; API Key</span>
+        <span class="gear-item-badge" id="qrzGearBadge">OFF</span>
+      </button>
       <button class="gear-item" onclick="shareApp();closeGearMenu()">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
         <span class="gear-item-label">Share This App</span>
@@ -1292,7 +1476,7 @@ body.dark-mode .gear-menu { background: #000000; }
         <span class="field-label">CALLSIGN</span>
         <input class="station-input" id="callsignInput" maxlength="10"
                placeholder="W1AW" value="W1AW" spellcheck="false"
-               oninput="this.value=this.value.toUpperCase();if(map)placeStationMarker()">
+               oninput="this.value=this.value.toUpperCase();if(map)placeStationMarker();pskrLastFetch=0;fetchPskReporter()">
       </div>
 
       <div class="station-divider"></div>
@@ -1471,21 +1655,28 @@ body.dark-mode .gear-menu { background: #000000; }
       <div class="map-wrap">
         <div id="leafletMap"></div>
 
-        <!-- Floating map controls -->
+        <!-- Floating map controls — RIGHT side, top to bottom -->
         <div class="map-toolbar">
           <button class="map-tb-btn active" id="btnGrayline" onclick="toggleGrayline(this)">☀ GRAY LINE</button>
           <button class="map-tb-btn active" id="btnPaths"    onclick="togglePaths(this)">⟵ DX PATHS</button>
           <button class="map-tb-btn active" id="btnGrid"     onclick="toggleGrid(this)">⊞ GRID SQ</button>
           <button class="map-tb-btn"        onclick="recenterMap()">⊙ RECENTER</button>
+          <button class="map-tb-btn"        id="mapExpandBtn" onclick="toggleMapExpand()">⤢ EXPAND</button>
         </div>
 
         <!-- Legend -->
         <div class="map-legend">
           <div class="legend-row"><div class="legend-dot" style="background:#0057ff"></div>MY STATION</div>
-          <div class="legend-row"><div class="legend-dot" style="background:#007a87"></div>DX CONTACTS</div>
+          <div class="legend-row"><div class="legend-dot" style="background:#c8102e"></div>PSKR HEARD</div>
           <div class="legend-row"><div class="legend-line" style="background:#e8a000"></div>GRAY LINE</div>
-          <div class="legend-row"><div class="legend-line" style="background:rgba(0,87,255,0.4);border-top:1px dashed #0057ff"></div>DX PATH</div>
+          <div class="legend-row"><div class="legend-line" style="background:rgba(200,16,46,0.5);border-top:1px solid #c8102e"></div>PSKR PATH</div>
         </div>
+      </div>
+      <!-- PSKReporter status bar under map -->
+      <div class="pskr-bar">
+        <div class="pskr-dot off" id="pskrDot"></div>
+        <span id="pskrStatus">PSKReporter: enter callsign to enable live DX paths</span>
+        <span id="pskrCount" class="pskr-count" style="margin-left:auto;display:none;"></span>
       </div>
     </div>
 
@@ -1546,6 +1737,14 @@ body.dark-mode .gear-menu { background: #000000; }
       <div class="panel-head">
         <div class="panel-dot" style="background:var(--accent)"></div>
         <span class="panel-title">WORLD CLOCKS</span>
+        <button class="clock-edit-btn" onclick="toggleClockEditor()" id="clockEditBtn">✎ EDIT</button>
+      </div>
+      <!-- Clock editor (hidden by default) -->
+      <div id="clockEditor" style="display:none;">
+        <div class="clock-selector" id="clockSelectorRows"></div>
+        <div style="padding:0 12px 10px;">
+          <button class="clock-sel-apply" onclick="applyClockSelection()">APPLY</button>
+        </div>
       </div>
       <div class="panel-body" id="worldClocks"></div>
     </div>
@@ -1555,6 +1754,7 @@ body.dark-mode .gear-menu { background: #000000; }
       <div class="panel-head">
         <div class="panel-dot" style="background:var(--yellow)"></div>
         <span class="panel-title">QUICK LOG</span>
+        <span class="qrz-badge off" id="qrzLogBadge" onclick="openQrzModal()" title="Connect QRZ to upload QSOs">QRZ</span>
       </div>
       <div class="panel-body">
         <div class="log-grid">
@@ -1572,25 +1772,16 @@ body.dark-mode .gear-menu { background: #000000; }
             <label>MODE</label>
             <select class="log-select" id="logMode">
               <optgroup label="HF Digital">
-                <option>FT8</option>
-                <option>FT4</option>
-                <option>RTTY</option>
-                <option>PSK31</option>
-                <option>JS8</option>
+                <option>FT8</option><option>FT4</option><option>RTTY</option>
+                <option>PSK31</option><option>JS8</option>
               </optgroup>
               <optgroup label="HF Voice / CW">
-                <option>SSB</option>
-                <option>CW</option>
-                <option>AM</option>
+                <option>SSB</option><option>CW</option><option>AM</option>
               </optgroup>
               <optgroup label="Digital Voice">
-                <option>DMR</option>
-                <option>D-STAR</option>
-                <option>C4FM</option>
+                <option>DMR</option><option>D-STAR</option><option>C4FM</option>
               </optgroup>
-              <optgroup label="FM">
-                <option>FM</option>
-              </optgroup>
+              <optgroup label="FM"><option>FM</option></optgroup>
             </select>
           </div>
           <div class="log-field">
@@ -1602,21 +1793,11 @@ body.dark-mode .gear-menu { background: #000000; }
           <div class="log-field" style="grid-column:1/-1;">
             <label>OPERATION TYPE</label>
             <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:2px;">
-              <label class="op-type-btn">
-                <input type="radio" name="opType" value="N/A" checked onchange="onOpTypeChange()"> N/A
-              </label>
-              <label class="op-type-btn">
-                <input type="radio" name="opType" value="POTA" onchange="onOpTypeChange()"> POTA
-              </label>
-              <label class="op-type-btn">
-                <input type="radio" name="opType" value="SOTA" onchange="onOpTypeChange()"> SOTA
-              </label>
-              <label class="op-type-btn">
-                <input type="radio" name="opType" value="Field Day" onchange="onOpTypeChange()"> Field Day
-              </label>
-              <label class="op-type-btn">
-                <input type="radio" name="opType" value="Other" onchange="onOpTypeChange()"> Other
-              </label>
+              <label class="op-type-btn"><input type="radio" name="opType" value="N/A" checked onchange="onOpTypeChange()"> N/A</label>
+              <label class="op-type-btn"><input type="radio" name="opType" value="POTA" onchange="onOpTypeChange()"> POTA</label>
+              <label class="op-type-btn"><input type="radio" name="opType" value="SOTA" onchange="onOpTypeChange()"> SOTA</label>
+              <label class="op-type-btn"><input type="radio" name="opType" value="Field Day" onchange="onOpTypeChange()"> Field Day</label>
+              <label class="op-type-btn"><input type="radio" name="opType" value="Other" onchange="onOpTypeChange()"> Other</label>
             </div>
           </div>
         </div>
@@ -1626,14 +1807,54 @@ body.dark-mode .gear-menu { background: #000000; }
             <input class="log-input" id="opTypeOther" placeholder="Enter operation details…" style="text-transform:none;">
           </div>
         </div>
-        <button class="log-btn" style="margin-top:8px;" onclick="logQso()">LOG QSO</button>
-        <div class="log-count">QSOs THIS SESSION: <span id="qsoCount" style="color:var(--accent);font-weight:600;">0</span></div>
+        <button class="log-btn" style="margin-top:8px;" onclick="logQso()">LOG QSO (LOCAL)</button>
+        <button class="log-btn-qrz" id="qrzUploadBtn" onclick="logAndUploadQrz()" disabled title="Connect QRZ in ⚙ Settings first">
+          ↑ LOG &amp; UPLOAD TO QRZ
+        </button>
+        <div class="log-count">QSOs THIS SESSION: <span id="qsoCount" style="color:var(--accent);font-weight:600;">0</span>
+          &nbsp;·&nbsp; QRZ UPLOADS: <span id="qrzUploadCount" style="color:#c8102e;font-weight:600;">0</span></div>
       </div>
     </div>
 
   </div><!-- /col-right -->
 
 </div><!-- /main -->
+
+<!-- ══ QRZ LOGIN MODAL ══════════════════════════════════════════════════════ -->
+<div class="qrz-backdrop hidden" id="qrzBackdrop" onclick="if(event.target===this)closeQrzModal()">
+  <div class="qrz-modal">
+    <div class="qrz-modal-head">
+      <div>
+        <div class="qrz-modal-title">QRZ LOGBOOK</div>
+        <div class="qrz-modal-sub">CONNECT YOUR QRZ.COM ACCOUNT</div>
+      </div>
+      <button class="qrz-close" onclick="closeQrzModal()">✕</button>
+    </div>
+    <div class="qrz-body">
+      <div class="qrz-field">
+        <label class="qrz-label">QRZ Logbook API Access Key</label>
+        <input class="qrz-input" id="qrzApiKey" placeholder="ABCD-0A0B-1C1D-2E2F" autocomplete="off"
+               style="font-size:12px;letter-spacing:1px;" spellcheck="false">
+      </div>
+      <div class="qrz-info">
+        <strong>Where to find your API key:</strong><br>
+        1. Log in to <a href="https://www.qrz.com" target="_blank">qrz.com</a><br>
+        2. Go to <strong>Logbook → Settings → API Access Key</strong><br>
+        3. Copy the key and paste it above<br><br>
+        <strong>Test your key:</strong> <a href="https://logbook.qrz.com/apicheck" target="_blank">logbook.qrz.com/apicheck</a><br><br>
+        <strong>Note:</strong> A QRZ subscription (XML level or higher) is required.
+        Your key is stored only in your browser.
+      </div>
+      <div class="qrz-status" id="qrzStatus"></div>
+    </div>
+    <div class="qrz-footer">
+      <button class="qrz-btn qrz-btn-secondary" id="qrzDisconnectBtn"
+              style="display:none;" onclick="disconnectQrz()">DISCONNECT</button>
+      <button class="qrz-btn qrz-btn-secondary" onclick="closeQrzModal()">CANCEL</button>
+      <button class="qrz-btn qrz-btn-primary" id="qrzConnectBtn" onclick="connectQrz()">VERIFY KEY</button>
+    </div>
+  </div>
+</div>
 
 <!-- ══ TICKER ══════════════════════════════════════════════════════════════ -->
 <div class="ticker-bar">
@@ -1757,25 +1978,168 @@ const DXCC = ['VK','JA','G','DL','UA','F','BY','ZL','LU','PY','VU','HS',
 const MODES = ['SSB','CW','FT8','FT4','RTTY','PSK31','JS8'];
 const NOTES = ['UP 5','599 TNX','QSB','CQ DX','LOUD','WEAK SIG','QRM','SPLIT','CQ CONTEST','UP 2–4'];
 
-const ZONES = [
-  { city:'UTC / ZULU', tz:'UTC',               zone:'Z'   },
-  { city:'New York',   tz:'America/New_York',   zone:'ET'  },
-  { city:'London',     tz:'Europe/London',      zone:'BST' },
-  { city:'Moscow',     tz:'Europe/Moscow',      zone:'MSK' },
-  { city:'Tokyo',      tz:'Asia/Tokyo',         zone:'JST' },
-  { city:'Sydney',     tz:'Australia/Sydney',   zone:'AEST'},
+// ── WORLD CLOCK TIMEZONES ─────────────────────────────────────────────────────
+// All available zones users can pick from
+const ALL_ZONES = [
+  { city:'UTC / ZULU',    tz:'UTC',                    zone:'Z'    },
+  { city:'New York',      tz:'America/New_York',        zone:'ET'   },
+  { city:'Chicago',       tz:'America/Chicago',         zone:'CT'   },
+  { city:'Denver',        tz:'America/Denver',          zone:'MT'   },
+  { city:'Los Angeles',   tz:'America/Los_Angeles',     zone:'PT'   },
+  { city:'London',        tz:'Europe/London',           zone:'GMT'  },
+  { city:'Paris',         tz:'Europe/Paris',            zone:'CET'  },
+  { city:'Berlin',        tz:'Europe/Berlin',           zone:'CET'  },
+  { city:'Moscow',        tz:'Europe/Moscow',           zone:'MSK'  },
+  { city:'Dubai',         tz:'Asia/Dubai',              zone:'GST'  },
+  { city:'India',         tz:'Asia/Kolkata',            zone:'IST'  },
+  { city:'Bangkok',       tz:'Asia/Bangkok',            zone:'ICT'  },
+  { city:'Beijing',       tz:'Asia/Shanghai',           zone:'CST'  },
+  { city:'Tokyo',         tz:'Asia/Tokyo',              zone:'JST'  },
+  { city:'Seoul',         tz:'Asia/Seoul',              zone:'KST'  },
+  { city:'Sydney',        tz:'Australia/Sydney',        zone:'AEST' },
+  { city:'Auckland',      tz:'Pacific/Auckland',        zone:'NZST' },
+  { city:'Honolulu',      tz:'Pacific/Honolulu',        zone:'HST'  },
+  { city:'Anchorage',     tz:'America/Anchorage',       zone:'AKST' },
+  { city:'São Paulo',     tz:'America/Sao_Paulo',       zone:'BRT'  },
+  { city:'Buenos Aires',  tz:'America/Argentina/Buenos_Aires', zone:'ART' },
+  { city:'Johannesburg',  tz:'Africa/Johannesburg',     zone:'SAST' },
+  { city:'Cairo',         tz:'Africa/Cairo',            zone:'EET'  },
+  { city:'Nairobi',       tz:'Africa/Nairobi',          zone:'EAT'  },
 ];
 
-// DX beacon points for map (fixed)
-const DX_BEACONS = [
-  { lon:139.7, lat:35.7,  label:'JA1' },
-  { lon:2.35,  lat:48.9,  label:'F1'  },
-  { lon:37.6,  lat:55.8,  label:'UA3' },
-  { lon:151.2, lat:-33.9, label:'VK2' },
-  { lon:-46.6, lat:-23.5, label:'PY2' },
-  { lon:28.0,  lat:-26.1, label:'ZS6' },
-  { lon:135.5, lat:34.7,  label:'JA3' },
+// Active zones — first two are always UTC + local (from grid). Rest are user-selectable.
+let userZones = [
+  { city:'UTC / ZULU', tz:'UTC',             zone:'Z'   },
+  { city:'Local',      tz:'auto',            zone:'LOC' },  // auto = derived from grid
+  { city:'London',     tz:'Europe/London',   zone:'GMT' },
+  { city:'Tokyo',      tz:'Asia/Tokyo',      zone:'JST' },
 ];
+
+// Derive IANA timezone from lon offset (best-effort)
+function lonToApproxTz(lon) {
+  // Rough offset in hours
+  const off = Math.round(lon / 15);
+  const map = {
+    '-12':'Etc/GMT+12','-11':'Pacific/Pago_Pago','-10':'Pacific/Honolulu',
+    '-9':'America/Anchorage','-8':'America/Los_Angeles','-7':'America/Denver',
+    '-6':'America/Chicago','-5':'America/New_York','-4':'America/Halifax',
+    '-3':'America/Sao_Paulo','-2':'Atlantic/South_Georgia','-1':'Atlantic/Azores',
+    '0':'Europe/London','1':'Europe/Paris','2':'Africa/Cairo',
+    '3':'Europe/Moscow','4':'Asia/Dubai','5':'Asia/Karachi',
+    '6':'Asia/Dhaka','7':'Asia/Bangkok','8':'Asia/Shanghai',
+    '9':'Asia/Tokyo','10':'Australia/Sydney','11':'Pacific/Guadalcanal',
+    '12':'Pacific/Auckland',
+  };
+  return map[String(off)] || 'UTC';
+}
+
+// DX beacon points for map (fixed)
+// ── PSKREPORTER LIVE DX PATHS ─────────────────────────────────────────────────
+// API: https://retrieve.pskreporter.info/query?senderCallsign=CALL&rronly=1&flowStartSeconds=-900
+// Returns XML receptionReport elements — who heard the user's callsign in last 15 min
+// Per PSKReporter policy: poll no more than once every 5 minutes.
+
+let pskrData       = [];   // array of {lat, lon, label, freq, mode, snr}
+let pskrLastFetch  = 0;
+let pskrInterval   = null;
+const PSKR_TTL_MS  = 5 * 60 * 1000;  // 5 minutes minimum between fetches
+
+async function fetchPskReporter() {
+  const call = (document.getElementById('callsignInput').value || '').trim().toUpperCase();
+  if (!call || call === 'W1AW') {
+    setPskrStatus('off', 'PSKReporter: enter your callsign to enable live DX paths');
+    return;
+  }
+
+  const now = Date.now();
+  if (now - pskrLastFetch < PSKR_TTL_MS) return;  // respect rate limit
+  pskrLastFetch = now;
+
+  setPskrStatus('loading', `PSKReporter: fetching reports for ${call}…`);
+
+  // Query: who heard our callsign in the last 15 minutes
+  const params = new URLSearchParams({
+    senderCallsign:    call,
+    rronly:            '1',
+    flowStartSeconds:  '-900',   // last 15 minutes
+    reportlimit:       '50',
+  });
+  const url = `https://retrieve.pskreporter.info/query?${params}`;
+
+  // Try direct first (pskreporter allows CORS on retrieve subdomain),
+  // then fall back through proxies
+  const proxies = [
+    () => url,
+    () => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    () => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+  ];
+
+  let xml = null;
+  for (const makeUrl of proxies) {
+    try {
+      const res = await fetch(makeUrl(), { mode: 'cors' });
+      if (!res.ok) continue;
+      const text = await res.text();
+      if (text.includes('receptionReport') || text.includes('receptionReports')) {
+        xml = text; break;
+      }
+    } catch(e) { /* try next proxy */ }
+  }
+
+  if (!xml) {
+    setPskrStatus('off', 'PSKReporter: could not reach server — will retry in 5 min');
+    return;
+  }
+
+  // Parse XML
+  const doc = new DOMParser().parseFromString(xml, 'text/xml');
+  const reports = [...doc.querySelectorAll('receptionReport')];
+
+  pskrData = reports.map(r => {
+    const locator = r.getAttribute('receiverLocator') || '';
+    const pos     = locator.length >= 4 ? gridToLatLon(locator) : null;
+    if (!pos) return null;
+    return {
+      lat:   pos.lat,
+      lon:   pos.lon,
+      label: r.getAttribute('receiverCallsign') || '?',
+      freq:  Math.round((parseInt(r.getAttribute('frequency') || '0')) / 1000) / 1000 + ' MHz',
+      mode:  r.getAttribute('mode') || '',
+      snr:   r.getAttribute('sNR') || '',
+      locator,
+    };
+  }).filter(Boolean);
+
+  // Deduplicate by receiver callsign
+  const seen = new Set();
+  pskrData = pskrData.filter(p => { if (seen.has(p.label)) return false; seen.add(p.label); return true; });
+
+  setPskrStatus('live', `PSKReporter: ${pskrData.length} station${pskrData.length !== 1 ? 's' : ''} heard ${call}`);
+
+  const countEl = document.getElementById('pskrCount');
+  if (countEl) {
+    countEl.textContent = `${pskrData.length} heard`;
+    countEl.style.display = pskrData.length ? 'inline' : 'none';
+  }
+
+  // Redraw map paths
+  if (map && showPaths) placeDxMarkers();
+}
+
+function setPskrStatus(state, msg) {
+  const dot    = document.getElementById('pskrDot');
+  const status = document.getElementById('pskrStatus');
+  if (dot)    { dot.className = `pskr-dot ${state}`; }
+  if (status) status.textContent = msg;
+}
+
+function startPskrPolling() {
+  fetchPskReporter();                                   // immediate first fetch
+  if (pskrInterval) clearInterval(pskrInterval);
+  pskrInterval = setInterval(fetchPskReporter, PSKR_TTL_MS);
+}
+
+// ── DX BEACON MARKERS + GREAT-CIRCLE PATHS (live from PSKReporter) ────────────
 
 // ── GRID SQUARE HANDLING ────────────────────────────────────────────────────
 function onGridChange(val) {
@@ -1825,19 +2189,26 @@ function updateClocks() {
   const utc = now.toUTCString().split(' ')[4];
   document.getElementById('utcClock').textContent = utc;
   const lc = document.getElementById('localClock');
-  if (lc) lc.textContent =
-    'LOCAL ' + now.toLocaleTimeString('en-US', { hour12: false });
+  if (lc) lc.textContent = 'LOCAL ' + now.toLocaleTimeString('en-US', { hour12: false });
   document.getElementById('lastUpdate').textContent = utc;
 
-  // World clocks
-  document.getElementById('worldClocks').innerHTML = ZONES.map(z => {
-    const t = new Date().toLocaleTimeString('en-US', {
-      timeZone: z.tz, hour12: false,
-      hour: '2-digit', minute: '2-digit', second: '2-digit'
-    });
+  // Resolve 'auto' tz from grid square longitude
+  const localTz = lonToApproxTz(myLon);
+
+  document.getElementById('worldClocks').innerHTML = userZones.map((z, i) => {
+    const tz = (z.tz === 'auto') ? localTz : z.tz;
+    const label = (z.tz === 'auto') ? 'Local (' + z.city + ')' : z.city;
+    let t;
+    try {
+      t = new Date().toLocaleTimeString('en-US', {
+        timeZone: tz, hour12: false,
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      });
+    } catch(e) { t = '--:--:--'; }
+    const locked = i < 2 ? '🔒 ' : '';
     return `<div class="clock-row">
       <div>
-        <div class="clock-city">${z.city}</div>
+        <div class="clock-city">${locked}${label}</div>
         <div class="clock-zone">${z.zone}</div>
       </div>
       <div class="clock-val">${t}</div>
@@ -2091,27 +2462,51 @@ function placeDxMarkers() {
 
   if (!showPaths) return;
 
-  DX_BEACONS.forEach(p => {
-    // Great-circle path as geodesic (approximated with intermediate points)
+  // Use live PSKReporter data; fall back to static beacons if no data yet
+  const points = pskrData.length > 0 ? pskrData : [
+    { lon:139.7, lat:35.7,  label:'JA1', freq:'', mode:'', snr:'' },
+    { lon:2.35,  lat:48.9,  label:'F1',  freq:'', mode:'', snr:'' },
+    { lon:37.6,  lat:55.8,  label:'UA3', freq:'', mode:'', snr:'' },
+    { lon:151.2, lat:-33.9, label:'VK2', freq:'', mode:'', snr:'' },
+    { lon:-46.6, lat:-23.5, label:'PY2', freq:'', mode:'', snr:'' },
+    { lon:28.0,  lat:-26.1, label:'ZS6', freq:'', mode:'', snr:'' },
+    { lon:135.5, lat:34.7,  label:'JA3', freq:'', mode:'', snr:'' },
+  ];
+
+  const isLive  = pskrData.length > 0;
+  const lineCol = isLive ? '#c8102e' : '#007a87';
+  const dotCol  = isLive ? '#c8102e' : '#007a87';
+
+  points.forEach(p => {
     const gcPoints = geodesicPoints([myLat, myLon], [p.lat, p.lon], 64);
 
     const line = L.polyline(gcPoints, {
-      color: '#007a87',
-      weight: 1.5,
-      opacity: 0.55,
-      dashArray: '4 6',
+      color:   lineCol,
+      weight:  isLive ? 2 : 1.5,
+      opacity: isLive ? 0.7 : 0.55,
+      dashArray: isLive ? null : '4 6',
     }).addTo(map);
     dxPathLines.push(line);
 
-    // DX station dot
-    const dxIcon = L.divIcon({
-      html: `<div style="width:10px;height:10px;border-radius:50%;background:#007a87;
-                  border:2px solid white;box-shadow:0 1px 4px rgba(0,120,135,0.5);
-                  transform:translate(-5px,-5px)"></div>`,
+    const dot = L.divIcon({
+      html: `<div style="width:${isLive?12:10}px;height:${isLive?12:10}px;border-radius:50%;
+                  background:${dotCol};border:2px solid white;
+                  box-shadow:0 1px 4px rgba(0,0,0,0.4);
+                  transform:translate(-${isLive?6:5}px,-${isLive?6:5}px)"></div>`,
       className: '', iconSize: [0, 0],
     });
-    const mk = L.marker([p.lat, p.lon], { icon: dxIcon })
-      .bindPopup(`<b style="color:#007a87">${p.label}</b><br>DX Station<br>${p.lat.toFixed(1)}°, ${p.lon.toFixed(1)}°`)
+
+    const popup = isLive
+      ? `<b style="color:${dotCol}">${p.label}</b><br>
+         Heard your signal<br>
+         ${p.freq ? `Freq: ${p.freq}<br>` : ''}
+         ${p.mode ? `Mode: ${p.mode}<br>` : ''}
+         ${p.snr  ? `SNR: ${p.snr} dB<br>` : ''}
+         Grid: ${p.locator || '—'}`
+      : `<b style="color:${dotCol}">${p.label}</b><br>Static beacon`;
+
+    const mk = L.marker([p.lat, p.lon], { icon: dot })
+      .bindPopup(popup)
       .addTo(map);
     dxMarkers.push(mk);
   });
@@ -2339,7 +2734,7 @@ function renderSpots() {
   document.getElementById('spotCountHdr').textContent = filtered.length;
   document.getElementById('dxccCount').textContent    = dxcc.size;
 
-  document.getElementById('spotBody').innerHTML = filtered.slice(0,35).map((s,i) =>
+  document.getElementById('spotBody').innerHTML = filtered.slice(0,25).map((s,i) =>
     `<tr class="${i===0?'flash':''}">
       <td class="s-age">${s.time}</td>
       <td><span class="s-call">${s.call}</span></td>
@@ -2418,6 +2813,420 @@ function logQso() {
   document.getElementById('logFreq').value = '';
   document.getElementById('logRst').value  = '';
   showToast(`Logged: ${call} ${freq} MHz — ${opLabel}`);
+}
+
+// ── FONT SIZE ─────────────────────────────────────────────────────────────────
+function setFontSize(size, btn) {
+  document.body.classList.remove(
+    'fs-normal','fs-large','fs-xlarge','fs-xxlarge','fs-xxxlarge','fs-huge'
+  );
+  document.body.classList.add('fs-' + size);
+  document.querySelectorAll('.fs-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  try { localStorage.setItem('hci_fontsize', size); } catch(e) {}
+}
+
+function restoreFontSize() {
+  const s = localStorage.getItem('hci_fontsize') || 'normal';
+  const idMap = {
+    normal:'fsN', large:'fsL', xlarge:'fsXL',
+    xxlarge:'fsXXL', xxxlarge:'fsXXXL', huge:'fsHuge'
+  };
+  const btn = document.getElementById(idMap[s] || 'fsN');
+  setFontSize(s, btn);
+}
+
+// ── MAP EXPAND ────────────────────────────────────────────────────────────────
+let mapExpanded = false;
+function toggleMapExpand() {
+  mapExpanded = !mapExpanded;
+  const m = document.getElementById('leafletMap');
+  const btn = document.getElementById('mapExpandBtn');
+  const lbl = document.getElementById('mapExpandLabel');
+  m.classList.toggle('map-expanded', mapExpanded);
+  if (btn)  btn.textContent  = mapExpanded ? '⤡ COLLAPSE' : '⤢ EXPAND';
+  if (lbl)  lbl.textContent  = mapExpanded ? 'Collapse Map' : 'Expand Map';
+  if (map)  setTimeout(() => map.invalidateSize(), 360);
+}
+
+// ── WORLD CLOCK EDITOR ────────────────────────────────────────────────────────
+function toggleClockEditor() {
+  const ed = document.getElementById('clockEditor');
+  const btn = document.getElementById('clockEditBtn');
+  const open = ed.style.display === 'none';
+  ed.style.display = open ? 'block' : 'none';
+  btn.textContent = open ? '✓ DONE' : '✎ EDIT';
+  if (open) buildClockEditor();
+}
+
+function buildClockEditor() {
+  const rows = document.getElementById('clockSelectorRows');
+  rows.innerHTML = '';
+  // Slots 0-1 are locked (UTC + Local). Show all 4 slots.
+  for (let i = 0; i < userZones.length; i++) {
+    const z = userZones[i];
+    const locked = i < 2;
+    const row = document.createElement('div');
+    row.className = 'clock-sel-row';
+
+    const lbl = document.createElement('span');
+    lbl.className = 'clock-sel-label';
+    lbl.textContent = locked ? (i===0?'UTC':'LOC') : `#${i+1}`;
+
+    if (locked) {
+      const info = document.createElement('span');
+      info.style.cssText = 'font-family:DM Mono,monospace;font-size:9px;color:var(--ink3);flex:1;padding:4px 8px;';
+      info.textContent = i===0 ? 'UTC / ZULU (fixed)' : 'Local timezone from grid (auto)';
+      row.appendChild(lbl); row.appendChild(info);
+    } else {
+      const sel = document.createElement('select');
+      sel.className = 'clock-sel-input';
+      sel.dataset.slot = i;
+      ALL_ZONES.filter(az => az.tz !== 'UTC').forEach(az => {
+        const opt = document.createElement('option');
+        opt.value = az.tz;
+        opt.textContent = `${az.city} (${az.zone})`;
+        if (az.tz === z.tz) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      row.appendChild(lbl); row.appendChild(sel);
+    }
+    rows.appendChild(row);
+  }
+  // +/- slot controls
+  const ctrl = document.createElement('div');
+  ctrl.style.cssText = 'display:flex;gap:6px;margin-top:6px;';
+  const addBtn = document.createElement('button');
+  addBtn.className = 'clock-sel-apply'; addBtn.style.background = 'var(--green)';
+  addBtn.textContent = '+ ADD CLOCK';
+  addBtn.onclick = () => {
+    if (userZones.length < 8) {
+      userZones.push({ city:'London', tz:'Europe/London', zone:'GMT' });
+      buildClockEditor();
+    }
+  };
+  const remBtn = document.createElement('button');
+  remBtn.className = 'clock-sel-apply'; remBtn.style.background = 'var(--red)';
+  remBtn.textContent = '− REMOVE LAST';
+  remBtn.onclick = () => {
+    if (userZones.length > 2) { userZones.pop(); buildClockEditor(); }
+  };
+  ctrl.appendChild(addBtn); ctrl.appendChild(remBtn);
+  rows.appendChild(ctrl);
+}
+
+function applyClockSelection() {
+  document.querySelectorAll('#clockSelectorRows select').forEach(sel => {
+    const slot = parseInt(sel.dataset.slot);
+    const tz   = sel.value;
+    const zdef = ALL_ZONES.find(z => z.tz === tz);
+    if (zdef) userZones[slot] = { ...zdef };
+  });
+  saveClockZones();
+  toggleClockEditor();
+  updateClocks();
+}
+
+function saveClockZones() {
+  try { localStorage.setItem('hci_zones', JSON.stringify(userZones.slice(2))); } catch(e) {}
+}
+function loadClockZones() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('hci_zones') || 'null');
+    if (Array.isArray(saved) && saved.length) {
+      userZones = [userZones[0], userZones[1], ...saved];
+    }
+  } catch(e) {}
+}
+
+// ── QRZ LOGBOOK API ───────────────────────────────────────────────────────────
+//
+// Based on: https://www.qrz.com/docs/logbook/QRZLogbookAPI.html
+//
+// Key facts from the official docs:
+//   • Endpoint : POST https://logbook.qrz.com/api
+//   • Auth     : API Access Key only — obtained from qrz.com logbook settings
+//   • Format   : application/x-www-form-urlencoded  KEY=…&ACTION=…&ADIF=…
+//   • Response : URL-encoded pairs  RESULT=OK&LOGID=…  (NOT XML)
+//   • User-Agent header is REQUIRED — generic agents get 403 / rate-limited
+//
+let qrzApiKey  = '';   // The logbook access key from qrz.com
+let qrzUploads = 0;
+let qrzVerified = false;  // true once STATUS confirms the key works
+
+// ─── Modal open / close ───────────────────────────────────────────────────────
+function openQrzModal() {
+  const prefs = loadQrzPrefs();
+  if (prefs.key) document.getElementById('qrzApiKey').value = prefs.key;
+  document.getElementById('qrzStatus').textContent = '';
+  document.getElementById('qrzStatus').className   = 'qrz-status';
+  const disc = document.getElementById('qrzDisconnectBtn');
+  if (disc) disc.style.display = qrzVerified ? 'block' : 'none';
+  const conn = document.getElementById('qrzConnectBtn');
+  if (conn) conn.textContent = qrzVerified ? 'RE-VERIFY' : 'VERIFY KEY';
+  document.getElementById('qrzBackdrop').classList.remove('hidden');
+}
+
+function closeQrzModal() {
+  document.getElementById('qrzBackdrop').classList.add('hidden');
+}
+
+// ─── Credential storage ───────────────────────────────────────────────────────
+function saveQrzPrefs(key) {
+  try { localStorage.setItem('hci_qrz_key', key); } catch(e) {}
+}
+function loadQrzPrefs() {
+  try {
+    return { key: localStorage.getItem('hci_qrz_key') || '' };
+  } catch(e) { return { key: '' }; }
+}
+function clearQrzPrefs() {
+  try { localStorage.removeItem('hci_qrz_key'); } catch(e) {}
+}
+
+// ─── Core API call ────────────────────────────────────────────────────────────
+// QRZ Logbook API endpoint — QRZ serves CORS headers on this domain,
+// so we try it directly first. If a CORS/network error occurs we try
+// a chain of public CORS proxies as fallback.
+const QRZ_LOGBOOK_API = 'https://logbook.qrz.com/api';
+// App identifier as required by QRZ API docs
+const QRZ_USER_AGENT  = 'HamClockImproved/1.0 (W7CTY)';
+
+// Proxy fallback chain (tried in order if direct fails)
+const CORS_PROXIES = [
+  url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+  url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+  url => `https://proxy.cors.sh/${url}`,
+];
+
+async function qrzLogbookPost(params) {
+  // Build URL-encoded body per QRZ API spec
+  const body = new URLSearchParams(params).toString();
+
+  // ── Attempt 1: direct call (QRZ's logbook endpoint allows CORS) ────────────
+  try {
+    const res = await fetch(QRZ_LOGBOOK_API, {
+      method:  'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent':   QRZ_USER_AGENT,
+      },
+      body: body,
+      mode: 'cors',
+    });
+    if (res.ok) {
+      const text = await res.text();
+      return Object.fromEntries(new URLSearchParams(text));
+    }
+    // Non-OK response — fall through to proxies
+    throw new Error(`HTTP ${res.status}`);
+  } catch (directErr) {
+    // CORS or network error — try proxy chain
+  }
+
+  // ── Attempt 2-4: CORS proxies ──────────────────────────────────────────────
+  // Proxies forward the request as a GET with the body encoded in the URL
+  // (some proxies support POST passthrough, others convert to GET)
+  // For proxies, we append the body params into the URL as a workaround
+  // for proxies that only support GET (QRZ also accepts GET for status checks)
+  const getParams = new URLSearchParams({ ...params });
+  const getUrl    = `${QRZ_LOGBOOK_API}?${getParams.toString()}`;
+
+  let lastErr = null;
+  for (const makeProxyUrl of CORS_PROXIES) {
+    try {
+      const proxyUrl = makeProxyUrl(getUrl);
+      const res = await fetch(proxyUrl, {
+        method: 'GET',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        mode: 'cors',
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const text = await res.text();
+      if (!text || text.startsWith('<')) throw new Error('Got HTML, not API response');
+      return Object.fromEntries(new URLSearchParams(text));
+    } catch(e) {
+      lastErr = e;
+    }
+  }
+
+  // ── All attempts failed — give helpful error ───────────────────────────────
+  throw new Error(
+    'Cannot reach QRZ. Check your internet connection. ' +
+    'If this persists, QRZ may be temporarily unavailable. ' +
+    `(${lastErr?.message || 'Network error'})`
+  );
+}
+
+// ─── Verify key with STATUS action ────────────────────────────────────────────
+async function connectQrz() {
+  const key = document.getElementById('qrzApiKey').value.trim();
+
+  if (!key) {
+    setQrzStatus('Paste your QRZ Logbook API Access Key above.', 'err'); return;
+  }
+
+  setQrzStatus('Verifying key with QRZ…', 'busy');
+  document.getElementById('qrzConnectBtn').disabled = true;
+
+  try {
+    const r = await qrzLogbookPost({ KEY: key, ACTION: 'STATUS' });
+
+    if (r.RESULT === 'FAIL') throw new Error(r.REASON || 'Key rejected by QRZ');
+    if (r.RESULT === 'AUTH') throw new Error('Key not authorised — check it is correct');
+    if (!r.RESULT)           throw new Error('Unexpected response from QRZ');
+
+    // Key works — save it
+    qrzApiKey  = key;
+    qrzVerified = true;
+    saveQrzPrefs(key);
+
+    // Extract logbook info from DATA field if present
+    const info = r.DATA ? r.DATA.split('&').find(p => p.startsWith('BOOKNAME=')) || '' : '';
+    const bookName = info ? decodeURIComponent(info.split('=')[1] || '') : '';
+    setQrzStatus(`✓ Key verified${bookName ? ' — ' + bookName : ''}`, 'ok');
+
+    updateQrzBadge(true);
+    const disc = document.getElementById('qrzDisconnectBtn');
+    if (disc) disc.style.display = 'block';
+    document.getElementById('qrzConnectBtn').textContent = 'RE-VERIFY';
+    setTimeout(closeQrzModal, 1600);
+
+  } catch(err) {
+    setQrzStatus('✗ ' + err.message, 'err');
+    qrzVerified = false; updateQrzBadge(false);
+  } finally {
+    document.getElementById('qrzConnectBtn').disabled = false;
+  }
+}
+
+function disconnectQrz() {
+  qrzApiKey = ''; qrzVerified = false;
+  clearQrzPrefs(); updateQrzBadge(false); closeQrzModal();
+  showToast('QRZ disconnected');
+}
+
+function updateQrzBadge(connected) {
+  document.querySelectorAll('#qrzLogBadge, #qrzGearBadge').forEach(b => {
+    b.className   = `qrz-badge ${connected ? 'on' : 'off'}`;
+    b.textContent = connected ? 'QRZ ✓' : 'QRZ';
+  });
+  document.getElementById('qrzUploadBtn').disabled = !connected;
+}
+
+function setQrzStatus(msg, cls) {
+  const el = document.getElementById('qrzStatus');
+  el.textContent = msg;
+  el.className   = 'qrz-status' + (cls ? ' ' + cls : '');
+}
+
+// ─── Build ADIF record per QRZ spec ──────────────────────────────────────────
+function buildAdif(qso) {
+  // ADIF field helper: <TAG:LENGTH>VALUE
+  const f = (tag, val) => {
+    const s = String(val || '');
+    return s ? `<${tag}:${s.length}>${s}` : '';
+  };
+
+  const now   = new Date();
+  // QSO_DATE: YYYYMMDD
+  const date  = now.toISOString().slice(0, 10).replace(/-/g, '');
+  // TIME_ON: HHMM (4 chars per QRZ docs)
+  const hhmm  = now.toUTCString().split(' ')[4].slice(0, 5).replace(':', '');
+
+  const [rs, rr] = (qso.rst || '59/59').split('/');
+  const myCall   = (document.getElementById('callsignInput').value || '').trim().toUpperCase();
+  const myGrid   = (document.getElementById('gridInput').value     || '').trim().toUpperCase();
+
+  return [
+    f('CALL',             qso.call),
+    f('QSO_DATE',         date),
+    f('TIME_ON',          hhmm),
+    f('FREQ',             qso.freq),
+    f('BAND',             freqToBand(parseFloat(qso.freq))),
+    f('MODE',             qso.mode),
+    f('RST_SENT',         rs || '59'),
+    f('RST_RCVD',         rr || '59'),
+    f('STATION_CALLSIGN', myCall),
+    f('MY_GRIDSQUARE',    myGrid),
+    '<EOR>',
+  ].filter(Boolean).join(' ');
+}
+
+// ─── Upload QSO to QRZ Logbook ────────────────────────────────────────────────
+async function uploadQsoToQrz(qso) {
+  if (!qrzApiKey) throw new Error('No API key — open ⚙ → QRZ Login & API Key');
+
+  const adif = buildAdif(qso);
+  const r    = await qrzLogbookPost({
+    KEY:    qrzApiKey,
+    ACTION: 'INSERT',
+    ADIF:   adif,
+  });
+
+  if (r.RESULT === 'FAIL')    throw new Error(r.REASON  || 'Insert failed');
+  if (r.RESULT === 'AUTH')    throw new Error('API key rejected — re-verify in settings');
+  if (r.RESULT === 'REPLACE') return r.LOGID || 'replaced';
+  if (r.RESULT === 'OK')      return r.LOGID || 'ok';
+  throw new Error(`Unexpected QRZ response: ${r.RESULT || '(empty)'}`);
+}
+
+function freqToBand(mhz) {
+  if (mhz < 2)  return '160m'; if (mhz < 4)  return '80m';
+  if (mhz < 6)  return '60m';  if (mhz < 8)  return '40m';
+  if (mhz < 11) return '30m';  if (mhz < 15) return '20m';
+  if (mhz < 19) return '17m';  if (mhz < 22) return '15m';
+  if (mhz < 25) return '12m';  if (mhz < 30) return '10m';
+  if (mhz < 54) return '6m';   return 'VHF';
+}
+
+// ─── Log & Upload button handler ──────────────────────────────────────────────
+async function logAndUploadQrz() {
+  const call = document.getElementById('logCall').value.trim().toUpperCase();
+  const freq = document.getElementById('logFreq').value.trim();
+  if (!call || !freq) { showToast('Enter callsign and frequency'); return; }
+  if (!qrzApiKey)     { openQrzModal(); return; }
+
+  const qso = {
+    call, freq,
+    mode: document.getElementById('logMode').value,
+    rst:  document.getElementById('logRst').value.trim() || '59/59',
+  };
+
+  const btn = document.getElementById('qrzUploadBtn');
+  btn.disabled    = true;
+  btn.textContent = '↑ UPLOADING…';
+
+  try {
+    const logid = await uploadQsoToQrz(qso);
+    qrzUploads++;
+    qsoCount++;
+    document.getElementById('qrzUploadCount').textContent = qrzUploads;
+    document.getElementById('qsoCount').textContent       = qsoCount;
+    document.getElementById('logCall').value = '';
+    document.getElementById('logFreq').value = '';
+    document.getElementById('logRst').value  = '';
+    showToast(`✓ ${call} uploaded to QRZ (ID: ${logid})`);
+  } catch(err) {
+    showToast('✗ QRZ upload failed: ' + err.message);
+  } finally {
+    btn.disabled    = false;
+    btn.textContent = '↑ LOG & UPLOAD TO QRZ';
+  }
+}
+
+// ─── Auto-restore key on page load ───────────────────────────────────────────
+async function autoReconnectQrz() {
+  const prefs = loadQrzPrefs();
+  if (!prefs.key) return;
+  try {
+    const r = await qrzLogbookPost({ KEY: prefs.key, ACTION: 'STATUS' });
+    if (r.RESULT && r.RESULT !== 'FAIL' && r.RESULT !== 'AUTH') {
+      qrzApiKey   = prefs.key;
+      qrzVerified = true;
+      updateQrzBadge(true);
+    }
+  } catch(e) { /* silent — user can re-verify manually */ }
 }
 
 function showToast(msg) {
@@ -2606,6 +3415,12 @@ function init() {
   const prefs  = loadPrefs();
   const params = parseUrlParams();
 
+  // Restore font size
+  restoreFontSize();
+
+  // Restore clock zone selections
+  loadClockZones();
+
   // URL params override saved prefs (for shared links)
   const call = params.call || prefs.call || '';
   const grid = params.grid || prefs.grid || '';
@@ -2622,7 +3437,6 @@ function init() {
 
   // Show wizard if first visit (and not arriving via shared link)
   if (!prefs.setup && !params.call) {
-    // Short delay so map loads behind wizard
     setTimeout(() => {
       document.getElementById('wizardBackdrop').classList.remove('hidden');
     }, 400);
@@ -2640,6 +3454,12 @@ function init() {
   initMap();
 
   document.getElementById('copyrightYear').textContent = new Date().getFullYear();
+
+  // Auto-restore QRZ API key on page load (silent background verify)
+  autoReconnectQrz();
+
+  // Start PSKReporter live DX path polling
+  startPskrPolling();
 
   setInterval(updateClocks, 1000);
   setInterval(() => { addSpot(); renderSpots(); }, 4500);
