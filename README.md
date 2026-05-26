@@ -107,27 +107,6 @@ Enter your **callsign** and **grid square** in the top banner. The map will cent
 
 ---
 
-## Publishing Online
-
-### GitHub Pages (recommended — free, permanent)
-1. Create a free account at [github.com](https://github.com)
-2. Create a new repository named `hamclock-improved`
-3. Upload `hamclock-white.html` (or dark), rename to `index.html`
-4. Go to **Settings → Pages → Source: main branch**
-5. Your live URL: `https://yourusername.github.io/hamclock-improved`
-
-### Netlify Drop (instant — no account needed)
-1. Go to [app.netlify.com/drop](https://app.netlify.com/drop)
-2. Drag and drop the HTML file
-3. Live URL generated in under 30 seconds
-
-### Cloudflare Pages
-1. [pages.cloudflare.com](https://pages.cloudflare.com)
-2. Connect a GitHub repo or upload directly
-3. URL: `https://hamclock.pages.dev` (or custom domain)
-
----
-
 ## Requirements
 
 | Requirement | Details |
@@ -136,18 +115,6 @@ Enter your **callsign** and **grid square** in the top banner. The map will cent
 | Internet | Required for map tiles (NatGeo) and Google Fonts; core functionality works offline |
 | Server | None — runs as a local HTML file |
 | Dependencies | Leaflet.js 1.9.4 (loaded from CDN), Google Fonts (loaded from CDN) |
-
----
-
-## File Structure
-
-```
-hamclock-white.html   — Light theme (self-contained, ~1900 lines)
-hamclock-dark.html    — Dark theme with all-gold text (self-contained, ~1925 lines)
-README.md             — This file
-```
-
-Both HTML files are fully self-contained. All CSS, JavaScript, and HTML are in a single file — no build tools, no dependencies to install, no npm, no framework.
 
 ---
 
