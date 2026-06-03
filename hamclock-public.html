@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <!-- Security: Content-Security-Policy — restricts resource origins -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://*.arcgisonline.com https://*.openstreetmap.org https://*.tile.openstreetmap.org; connect-src 'self' https://retrieve.pskreporter.info https://api.allorigins.win https://corsproxy.io https://proxy.cors.sh https://logbook.qrz.com https://www.hamqsl.com https://solar.w5ej.com https://*.arcgisonline.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://*.arcgisonline.com https://*.openstreetmap.org https://*.tile.openstreetmap.org; connect-src 'self' https://retrieve.pskreporter.info https://api.allorigins.win https://corsproxy.io https://proxy.cors.sh https://logbook.qrz.com https://www.hamqsl.com https://solar.w5ej.com https://api.open-meteo.com https://*.arcgisonline.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
 <title>HamClock Advanced — Amateur Radio Operations Center</title>
 <meta name="description" content="Free amateur radio operations center: HF conditions, DX spots, propagation map, world clocks, and QSO logger. Enter your callsign and grid square to get started.">
 <meta name="author" content="W7CTY">
@@ -251,11 +251,13 @@ body.fs-huge     { --font-scale: 2.0;  }
 .header-topbar {
   display: flex;
   align-items: center;
-  justify-content: flex-end;   /* MENU button to the right */
+  justify-content: flex-end;   /* MENU button to the right by default */
   width: 100%;
   padding: 0;
   flex-shrink: 0;
 }
+/* When patriotic theme is on, the visible badge pushes MENU to the right */
+body.usa250 .header-topbar { justify-content: space-between; }
 
 /* Logo row — centered horizontally */
 .logo-area {
@@ -1227,9 +1229,70 @@ body.dark-mode .footer-bar,
 body.dark-mode .gear-menu { background: #000000; }
 /* Ticker is always black background + gold text + red border (mode-independent) */
 
+/* ─────────────────────────────────────────────────────────────────────────
+   USA 250 PATRIOTIC THEME (toggle via MENU)
+   Recolors accents red/white/blue in BOTH light and dark cycles, and shows a
+   flag + "1776-2026 · 250" mark in the header. Old Glory Red #B22234,
+   Old Glory Blue #3C3B6E.
+   ───────────────────────────────────────────────────────────────────────── */
+body.usa250 {
+  --accent:    #3C3B6E;   /* Old Glory Blue  */
+  --accent-lt: #e6e6f2;
+  --red:       #B22234;   /* Old Glory Red   */
+  --red-lt:    #fbe9eb;
+}
+body.usa250.dark-mode {
+  --accent:    #6a78d8;
+  --accent-lt: #161a3a;
+  --red:       #e8505b;
+  --red-lt:    #2a0d10;
+}
+/* Patriotic top/bottom rule on the header */
+body.usa250 .header {
+  border-bottom: 3px solid #B22234;
+  box-shadow: inset 0 -6px 0 -3px #3C3B6E;
+}
+body.usa250 .footer-bar {
+  border-top: 3px solid #B22234;
+  box-shadow: inset 0 6px 0 -3px #3C3B6E;
+}
+
+/* The flag + 250 mark shown in the header when the theme is on */
+.usa250-badge {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: linear-gradient(180deg,#ffffff 0%,#f2f4ff 100%);
+  border: 1px solid #3C3B6E;
+  box-shadow: 0 1px 4px rgba(60,59,110,0.25);
+  font-family: 'DM Mono', monospace;
+  white-space: nowrap;
+}
+body.usa250 .usa250-badge { display: inline-flex; }
+.usa250-badge .u250-flag {
+  width: 30px; height: 20px; border-radius: 2px; overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.15); flex-shrink: 0;
+}
+.usa250-badge .u250-years {
+  font-size: 9px; font-weight: 600; color: #3C3B6E; line-height: 1.1;
+}
+.usa250-badge .u250-250 {
+  font-size: 18px; font-weight: 800; letter-spacing: 0.5px;
+  background: linear-gradient(180deg,#B22234 0%,#B22234 50%,#3C3B6E 50%,#3C3B6E 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: #B22234;
+}
+body.usa250.dark-mode .usa250-badge {
+  background: linear-gradient(180deg,#11142b 0%,#0a0c1c 100%);
+  border-color: #6a78d8;
+}
+body.usa250.dark-mode .usa250-badge .u250-years { color: #aeb6ee; }
+
 </style>
 </head>
-<body>
+<body class="usa250">
 
 <div class="toast" id="toast"></div>
 
@@ -1349,7 +1412,7 @@ body.dark-mode .gear-menu { background: #000000; }
           <div class="help-icon">🌗</div>
           <div class="help-row-text">
             <div class="help-row-label">Gray Line</div>
-            <div class="help-row-desc">The amber curve and dark shading show the day/night terminator in real time. The gray line (the boundary between day and night) is one of the best times for long-distance HF propagation — particularly on 40m and 80m.</div>
+            <div class="help-row-desc">The dark shading shows the day/night terminator in real time, and the moon icon marks the point on Earth where the Moon is currently overhead — click it to see the current phase and illumination. The boundary between day and night (the gray line) is one of the best times for long-distance HF propagation, particularly on 40m and 80m. Use the WEATHER button to show current sky conditions at the center of the map.</div>
           </div>
         </div>
         <div class="help-row">
@@ -1432,6 +1495,30 @@ body.dark-mode .gear-menu { background: #000000; }
 
   <!-- Top bar: MENU button right-aligned, never overlaps logo or fields -->
   <div class="header-topbar">
+    <!-- USA 250 patriotic badge (shown only when theme is on) -->
+    <div class="usa250-badge" id="usa250Badge" title="United States Semiquincentennial — 250 years, 1776–2026">
+      <span class="u250-flag">
+        <svg viewBox="0 0 30 20" width="30" height="20" xmlns="http://www.w3.org/2000/svg">
+          <rect width="30" height="20" fill="#B22234"/>
+          <rect y="1.54" width="30" height="1.54" fill="#fff"/>
+          <rect y="4.62" width="30" height="1.54" fill="#fff"/>
+          <rect y="7.69" width="30" height="1.54" fill="#fff"/>
+          <rect y="10.77" width="30" height="1.54" fill="#fff"/>
+          <rect y="13.85" width="30" height="1.54" fill="#fff"/>
+          <rect y="16.92" width="30" height="1.54" fill="#fff"/>
+          <rect width="12" height="10.77" fill="#3C3B6E"/>
+          <g fill="#fff">
+            <circle cx="2"  cy="1.8" r="0.7"/><circle cx="5"  cy="1.8" r="0.7"/><circle cx="8"  cy="1.8" r="0.7"/><circle cx="11" cy="1.8" r="0.7"/>
+            <circle cx="3.5" cy="3.8" r="0.7"/><circle cx="6.5" cy="3.8" r="0.7"/><circle cx="9.5" cy="3.8" r="0.7"/>
+            <circle cx="2"  cy="5.8" r="0.7"/><circle cx="5"  cy="5.8" r="0.7"/><circle cx="8"  cy="5.8" r="0.7"/><circle cx="11" cy="5.8" r="0.7"/>
+            <circle cx="3.5" cy="7.8" r="0.7"/><circle cx="6.5" cy="7.8" r="0.7"/><circle cx="9.5" cy="7.8" r="0.7"/>
+            <circle cx="2"  cy="9.6" r="0.7"/><circle cx="5"  cy="9.6" r="0.7"/><circle cx="8"  cy="9.6" r="0.7"/><circle cx="11" cy="9.6" r="0.7"/>
+          </g>
+        </svg>
+      </span>
+      <span class="u250-years">1776<br>2026</span>
+      <span class="u250-250">250</span>
+    </div>
     <div class="gear-wrap" id="gearWrap">
     <button class="gear-btn" id="gearBtn" onclick="toggleGearMenu()" aria-label="Settings menu" title="Menu">
       ☰ MENU
@@ -1701,9 +1788,9 @@ body.dark-mode .gear-menu { background: #000000; }
 
         <!-- Floating map controls — RIGHT side, top to bottom -->
         <div class="map-toolbar">
-          <button class="map-tb-btn active" id="btnGrayline" onclick="toggleGrayline(this)">☀ GRAY LINE</button>
           <button class="map-tb-btn active" id="btnPaths"    onclick="togglePaths(this)">⟵ DX PATHS</button>
-          <button class="map-tb-btn active" id="btnGrid"     onclick="toggleGrid(this)">⊞ GRID SQ</button>
+          <button class="map-tb-btn"        id="btnGrid"     onclick="toggleGrid(this)">⊞ GRID SQ</button>
+          <button class="map-tb-btn"        id="btnWeather"  onclick="toggleWeather(this)">☁ WEATHER</button>
           <button class="map-tb-btn"        onclick="recenterMap()">⊙ RECENTER</button>
           <button class="map-tb-btn"        id="mapExpandBtn" onclick="toggleMapExpand()">⤢ EXPAND</button>
         </div>
@@ -1712,7 +1799,8 @@ body.dark-mode .gear-menu { background: #000000; }
         <div class="map-legend">
           <div class="legend-row"><div class="legend-dot" style="background:#0057ff"></div>MY STATION</div>
           <div class="legend-row"><div class="legend-dot" style="background:#c8102e"></div>HEARD ME</div>
-          <div class="legend-row"><div class="legend-line" style="background:#e8a000"></div>GRAY LINE</div>
+          <div class="legend-row"><div class="legend-dot" style="background:#ffd23f"></div>SUN (DAY)</div>
+          <div class="legend-row"><div class="legend-dot" style="background:#c8ccd8"></div>MOON (NIGHT)</div>
           <div class="legend-row"><div class="legend-line" style="background:#c8102e;opacity:0.65"></div>PSKR PATH</div>
         </div>
       </div>
@@ -1912,9 +2000,9 @@ body.dark-mode .gear-menu { background: #000000; }
 <footer class="footer-bar">
   <span class="footer-copy">© <span id="copyrightYear"></span> <span>W7CTY</span> · All Rights Reserved</span>
   <div class="footer-sep"></div>
-  <span class="footer-copy">HamClock Advanced v3.0.1 — Amateur Radio Operations Center</span>
+  <span class="footer-copy">HamClock Advanced v3.1.0 — Amateur Radio Operations Center</span>
   <div class="footer-sep"></div>
-  <span class="footer-copy" style="color:#FFD700;letter-spacing:1.5px;">v3.0.1</span>
+  <span class="footer-copy" style="color:#FFD700;letter-spacing:1.5px;">v3.1.0</span>
   <div class="footer-sep"></div>
   <a class="footer-email" href="mailto:w7cty@outlook.com">w7cty@outlook.com</a>
 </footer>
@@ -1984,7 +2072,8 @@ let bandFilter = 'all';
 let modeFilter = 'dx';
 let showGrayline = true;
 let showPaths = true;
-let showGridSq = true;
+let showGridSq = false;
+let showWeather = false;
 // Leaflet map objects
 let map = null;
 let stationMarker = null;
@@ -1993,6 +2082,8 @@ let dxMarkers = [];
 let terminatorLayer = null;
 let gridLayer = null;
 let sunMarker = null;
+let moonMarker = null;
+let weatherMarker = null;
 let terminatorInterval = null;
 
 const SOLAR = {
@@ -2514,6 +2605,9 @@ function initMap() {
   // Update terminator every 60 seconds
   terminatorInterval = setInterval(drawTerminator, 60000);
 
+  // Refresh weather-at-center when the map is panned or zoomed
+  map.on('moveend', () => { if (showWeather) fetchWeatherAtCenter(); });
+
   // Invalidate size after panel renders
   setTimeout(() => map.invalidateSize(), 200);
 }
@@ -2524,16 +2618,31 @@ function placeStationMarker() {
 
   const callsign = document.getElementById('callsignInput').value || 'W1AW';
 
-  // Custom icon
+  // Custom icon — radio antenna (transmitting tower) on a blue station pin
   const iconHtml = `
-    <div style="position:relative;width:32px;height:32px;transform:translate(-16px,-16px);">
+    <div style="position:relative;width:34px;height:34px;transform:translate(-17px,-17px);">
       <div style="position:absolute;inset:0;border-radius:50%;background:#0057ff;
                   box-shadow:0 0 0 3px rgba(0,87,255,0.25),0 2px 6px rgba(0,87,255,0.4);">
       </div>
-      <div style="position:absolute;inset:4px;border-radius:50%;background:#fff;display:flex;
-                  align-items:center;justify-content:center;font-size:11px;">📡</div>
+      <svg viewBox="0 0 24 24" width="22" height="22"
+           style="position:absolute;inset:6px;" fill="none"
+           stroke="#ffffff" stroke-width="1.7"
+           stroke-linecap="round" stroke-linejoin="round">
+        <!-- mast -->
+        <line x1="12" y1="9" x2="12" y2="21"/>
+        <!-- tower base legs -->
+        <path d="M9 21 L12 13 L15 21"/>
+        <line x1="10" y1="17" x2="14" y2="17"/>
+        <!-- transmit dot at the top -->
+        <circle cx="12" cy="7" r="1.3" fill="#ffffff" stroke="none"/>
+        <!-- radiating signal arcs -->
+        <path d="M8.8 5.2 A4.5 4.5 0 0 0 8.8 8.8"/>
+        <path d="M15.2 5.2 A4.5 4.5 0 0 1 15.2 8.8"/>
+        <path d="M6.8 3.5 A7 7 0 0 0 6.8 10.5"/>
+        <path d="M17.2 3.5 A7 7 0 0 1 17.2 10.5"/>
+      </svg>
     </div>
-    <div style="position:absolute;top:34px;left:50%;transform:translateX(-50%);white-space:nowrap;
+    <div style="position:absolute;top:36px;left:50%;transform:translateX(-50%);white-space:nowrap;
                 background:rgba(255,255,255,0.95);border:1px solid #d0d8e2;border-radius:4px;
                 padding:2px 6px;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;
                 color:#0057ff;box-shadow:0 1px 4px rgba(0,0,0,0.12);">${callsign}</div>`;
@@ -2625,6 +2734,7 @@ function geodesicPoints(from, to, steps) {
 function drawTerminator() {
   if (terminatorLayer) { terminatorLayer.remove(); terminatorLayer = null; }
   if (sunMarker)       { sunMarker.remove();       sunMarker       = null; }
+  if (moonMarker)      { moonMarker.remove();      moonMarker      = null; }
 
   const now  = new Date();
   const doy  = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
@@ -2638,34 +2748,142 @@ function drawTerminator() {
 
   if (!showGrayline) return;
 
-  // Build night polygon — the hemisphere facing away from the sun
-  // We generate the terminator as a closed polygon covering the night side
+  // ── NIGHT SHADING: soft fill over the night hemisphere ────────────────────────
+  // Uses the night polygon but with NO visible outline (stroke off) so there are
+  // no hard lines — only translucent shading to differentiate night from day.
   const nightPoly = buildNightPolygon(decl, subsolarLon);
-  terminatorLayer = L.polygon(nightPoly, {
-    color: '#e8a000',
-    weight: 2,
-    fillColor: '#001833',
-    fillOpacity: 0.22,
-    dashArray: null,
-  }).addTo(map);
+  const shadeLayer = L.polygon(nightPoly, {
+    stroke: false,           // no outline — avoids the hard lines
+    fillColor: '#0a1430',
+    fillOpacity: 0.28,
+    interactive: false,
+  });
 
-  // Sun marker
+  // ── GRAY LINE: the day/night terminator drawn as a single smooth curve ────────
+  // Curve spans the full map width (-180 to +180), so it reaches both edges.
+  const termCurve = buildTerminatorCurve(decl, subsolarLon);
+
+  // Group the shading (underneath) with the gray-line curve (on top)
+  terminatorLayer = L.layerGroup([
+    shadeLayer,
+    L.polyline(termCurve, {
+      color: '#e8a000', weight: 2.5, opacity: 0.9, noClip: true,
+    })
+  ]).addTo(map);
+
+  // ── SUN MARKER at the sub-solar point (daylight side) ─────────────────────────
   const sunIcon = L.divIcon({
-    html: `<div style="width:22px;height:22px;border-radius:50%;
-                background:radial-gradient(circle,#ffe566 30%,rgba(255,220,0,0) 80%);
-                transform:translate(-11px,-11px);filter:drop-shadow(0 0 4px rgba(255,200,0,0.7))">
-             <div style="position:absolute;inset:6px;border-radius:50%;background:#ffc800;"></div>
-           </div>`,
+    html: `<div style="
+        width:26px;height:26px;border-radius:50%;
+        background:radial-gradient(circle at 50% 50%, #fff3b0 0%, #ffd23f 45%, #ff9d00 100%);
+        border:1px solid rgba(255,220,120,0.9);
+        transform:translate(-13px,-13px);
+        box-shadow:0 0 10px rgba(255,190,40,0.85);
+        display:flex;align-items:center;justify-content:center;
+        font-size:15px;line-height:1;">\u2600\uFE0F</div>`,
     className: '', iconSize: [0, 0],
   });
   sunMarker = L.marker([decl, subsolarLon], { icon: sunIcon, zIndexOffset: 500 })
-    .bindPopup(`<b style="color:#b07d00">☀ Sun Position</b><br>
-      Declination: ${decl.toFixed(2)}°<br>
-      Sub-solar Lon: ${subsolarLon.toFixed(2)}°`)
+    .bindPopup(`<b style="color:#b07d00">\u2600\uFE0F Sun</b><br>
+      Overhead now (sub-solar point)<br>
+      Declination: ${decl.toFixed(1)}\u00b0<br>
+      Sub-solar: ${decl.toFixed(1)}\u00b0, ${subsolarLon.toFixed(1)}\u00b0`)
+    .addTo(map);
+
+  // ── MOON MARKER at the sub-lunar point (night side) ───────────────────────────
+  const moon = moonPosition(now);
+  const phase = moonPhase(now);   // {frac, name, emoji}
+
+  const moonIcon = L.divIcon({
+    html: `<div style="
+        width:26px;height:26px;border-radius:50%;
+        background:radial-gradient(circle at 35% 35%, #f4f4f8 0%, #c8ccd8 55%, #9097a8 100%);
+        border:1px solid rgba(255,255,255,0.6);
+        transform:translate(-13px,-13px);
+        box-shadow:0 0 8px rgba(200,210,235,0.7);
+        display:flex;align-items:center;justify-content:center;
+        font-size:15px;line-height:1;">${phase.emoji}</div>`,
+    className: '', iconSize: [0, 0],
+  });
+  moonMarker = L.marker([moon.lat, moon.lon], { icon: moonIcon, zIndexOffset: 500 })
+    .bindPopup(`<b style="color:#6a7290">${phase.emoji} Moon</b><br>
+      Phase: ${phase.name}<br>
+      Illumination: ${Math.round(phase.frac * 100)}%<br>
+      Sub-lunar: ${moon.lat.toFixed(1)}\u00b0, ${moon.lon.toFixed(1)}\u00b0`)
     .addTo(map);
 }
 
+// ── Moon phase (0=new, 0.5=full) and illuminated fraction ─────────────────────
+function moonPhase(date) {
+  // Days since known new moon: 2000-01-06 18:14 UTC
+  const synodic = 29.530588853;
+  const ref = Date.UTC(2000, 0, 6, 18, 14, 0);
+  const days = (date.getTime() - ref) / 86400000;
+  let age = days % synodic;
+  if (age < 0) age += synodic;
+  const phase = age / synodic;                       // 0..1 through the cycle
+  const frac = 0.5 * (1 - Math.cos(2 * Math.PI * phase));  // illuminated fraction
+  let name, emoji;
+  if      (phase < 0.0345) { name = 'New Moon';        emoji = '\u{1F311}'; }
+  else if (phase < 0.2155) { name = 'Waxing Crescent'; emoji = '\u{1F312}'; }
+  else if (phase < 0.2845) { name = 'First Quarter';   emoji = '\u{1F313}'; }
+  else if (phase < 0.4655) { name = 'Waxing Gibbous';  emoji = '\u{1F314}'; }
+  else if (phase < 0.5345) { name = 'Full Moon';       emoji = '\u{1F315}'; }
+  else if (phase < 0.7155) { name = 'Waning Gibbous';  emoji = '\u{1F316}'; }
+  else if (phase < 0.7845) { name = 'Last Quarter';    emoji = '\u{1F317}'; }
+  else if (phase < 0.9655) { name = 'Waning Crescent'; emoji = '\u{1F318}'; }
+  else                     { name = 'New Moon';        emoji = '\u{1F311}'; }
+  return { frac, name, emoji, phase };
+}
+
+// ── Approximate sub-lunar point (where the Moon is overhead) ───────────────────
+function moonPosition(date) {
+  // Low-precision lunar position (good to ~1-2 deg — fine for a map marker)
+  const rad = Math.PI / 180;
+  const d = (date.getTime() / 86400000) - 10957.5;   // days since J2000.0
+  // Mean elements
+  const L = (218.316 + 13.176396 * d) * rad;          // mean longitude
+  const M = (134.963 + 13.064993 * d) * rad;          // mean anomaly
+  const F = (93.272  + 13.229350 * d) * rad;          // argument of latitude
+  const lon = L + 6.289 * rad * Math.sin(M);          // ecliptic longitude
+  const lat = 5.128 * rad * Math.sin(F);              // ecliptic latitude
+  const obl = 23.439 * rad;                           // obliquity of ecliptic
+  // Ecliptic -> equatorial
+  const ra = Math.atan2(
+    Math.sin(lon) * Math.cos(obl) - Math.tan(lat) * Math.sin(obl),
+    Math.cos(lon)
+  );
+  const dec = Math.asin(
+    Math.sin(lat) * Math.cos(obl) + Math.cos(lat) * Math.sin(obl) * Math.sin(lon)
+  );
+  // Greenwich Mean Sidereal Time -> sub-lunar longitude
+  const utcH = date.getUTCHours() + date.getUTCMinutes()/60 + date.getUTCSeconds()/3600;
+  const gmst = (280.16 + 360.9856235 * d) % 360;      // degrees
+  let subLon = (ra / rad) - gmst;
+  subLon = ((subLon + 540) % 360) - 180;              // normalize to -180..180
+  return { lat: dec / rad, lon: subLon };
+}
+
 // Build night-side polygon for the terminator overlay
+// Build just the terminator CURVE (no polygon, no pole-closing edges).
+// Returns points ordered by longitude so it renders as one continuous gray line.
+function buildTerminatorCurve(decl, subsolarLon) {
+  // Compute the terminator latitude for EVERY longitude from -180 to +180,
+  // so the gray line always spans the full width of the map (no edge gaps).
+  // Great-circle terminator: lat = atan( -cos(H) / tan(decl) ),
+  // where H is the hour angle = (lon - subsolarLon).
+  const d = decl * Math.PI / 180;
+  const pts = [];
+  // Guard against tan(decl)=0 at the equinox: use a tiny floor.
+  const tanD = Math.tan(d) || 1e-9;
+  for (let lon = -180; lon <= 180; lon += 1) {
+    const H = (lon - subsolarLon) * Math.PI / 180;   // hour angle
+    const lat = Math.atan(-Math.cos(H) / tanD) * 180 / Math.PI;
+    pts.push([lat, lon]);
+  }
+  return pts;
+}
+
 function buildNightPolygon(decl, subsolarLon) {
   // The terminator circle on the sphere, projected to lat/lon
   const pts = [];
@@ -2772,12 +2990,6 @@ function updateMapStation() {
 }
 
 // Re-export toggle functions to work with Leaflet
-function toggleGrayline(btn) {
-  showGrayline = !showGrayline;
-  btn.classList.toggle('active', showGrayline);
-  drawTerminator();
-}
-
 function togglePaths(btn) {
   showPaths = !showPaths;
   btn.classList.toggle('active', showPaths);
@@ -2788,6 +3000,94 @@ function toggleGrid(btn) {
   showGridSq = !showGridSq;
   btn.classList.toggle('active', showGridSq);
   drawGridSquare();
+}
+
+// ── WEATHER AT MAP CENTER (Open-Meteo, no API key required) ───────────────────
+// WMO weather interpretation codes -> {label, emoji}
+function wmoWeather(code) {
+  const m = {
+    0:['Clear sky','\u2600\uFE0F'],
+    1:['Mainly clear','\u{1F324}\uFE0F'], 2:['Partly cloudy','\u26C5'], 3:['Overcast','\u2601\uFE0F'],
+    45:['Fog','\u{1F32B}\uFE0F'], 48:['Rime fog','\u{1F32B}\uFE0F'],
+    51:['Light drizzle','\u{1F327}\uFE0F'], 53:['Drizzle','\u{1F327}\uFE0F'], 55:['Heavy drizzle','\u{1F327}\uFE0F'],
+    56:['Freezing drizzle','\u{1F328}\uFE0F'], 57:['Freezing drizzle','\u{1F328}\uFE0F'],
+    61:['Light rain','\u{1F327}\uFE0F'], 63:['Rain','\u{1F327}\uFE0F'], 65:['Heavy rain','\u{1F327}\uFE0F'],
+    66:['Freezing rain','\u{1F328}\uFE0F'], 67:['Freezing rain','\u{1F328}\uFE0F'],
+    71:['Light snow','\u2744\uFE0F'], 73:['Snow','\u2744\uFE0F'], 75:['Heavy snow','\u2744\uFE0F'],
+    77:['Snow grains','\u2744\uFE0F'],
+    80:['Rain showers','\u{1F326}\uFE0F'], 81:['Rain showers','\u{1F326}\uFE0F'], 82:['Violent showers','\u26C8\uFE0F'],
+    85:['Snow showers','\u{1F328}\uFE0F'], 86:['Snow showers','\u{1F328}\uFE0F'],
+    95:['Thunderstorm','\u26C8\uFE0F'], 96:['Thunderstorm w/ hail','\u26C8\uFE0F'], 99:['Thunderstorm w/ hail','\u26C8\uFE0F'],
+  };
+  return m[code] || ['Unknown','\u2753'];
+}
+
+function toggleWeather(btn) {
+  showWeather = !showWeather;
+  btn.classList.toggle('active', showWeather);
+  if (showWeather) {
+    fetchWeatherAtCenter();
+  } else if (weatherMarker) {
+    weatherMarker.remove();
+    weatherMarker = null;
+  }
+}
+
+async function fetchWeatherAtCenter() {
+  if (!map) return;
+  const c = map.getCenter();
+  const lat = c.lat.toFixed(3), lon = c.lng.toFixed(3);
+
+  // Show a loading marker immediately
+  if (weatherMarker) { weatherMarker.remove(); weatherMarker = null; }
+  const loadIcon = L.divIcon({
+    html: `<div style="background:rgba(0,20,40,0.85);color:#9fd6ff;border:1px solid #3a6ea5;
+                border-radius:6px;padding:3px 7px;font:600 10px 'DM Mono',monospace;
+                white-space:nowrap;transform:translate(-50%,-50%)">\u2026 loading weather</div>`,
+    className: '', iconSize: [0,0],
+  });
+  weatherMarker = L.marker([c.lat, c.lng], { icon: loadIcon, zIndexOffset: 600 }).addTo(map);
+
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('weather fetch failed');
+    const data = await res.json();
+    const cw = data.current_weather;
+    if (!cw) throw new Error('no current_weather');
+
+    const [label, emoji] = wmoWeather(cw.weathercode);
+    const dayNight = cw.is_day ? '\u2600\uFE0F Day' : '\u{1F319} Night';
+    const tC = Math.round(cw.temperature);
+    const tF = Math.round(cw.temperature * 9/5 + 32);
+
+    if (weatherMarker) { weatherMarker.remove(); weatherMarker = null; }
+    const wIcon = L.divIcon({
+      html: `<div style="background:rgba(0,20,40,0.9);border:1px solid #3a6ea5;border-radius:8px;
+                  padding:5px 9px;font:600 11px 'DM Mono',monospace;color:#dbeeff;
+                  white-space:nowrap;transform:translate(-50%,-50%);
+                  box-shadow:0 1px 6px rgba(0,0,0,0.5)">
+                <span style="font-size:15px">${emoji}</span> ${label}<br>
+                <span style="color:#9fd6ff">${dayNight}</span> \u00b7 ${tC}\u00b0C / ${tF}\u00b0F
+              </div>`,
+      className: '', iconSize: [0,0],
+    });
+    weatherMarker = L.marker([c.lat, c.lng], { icon: wIcon, zIndexOffset: 600 })
+      .bindPopup(`<b style="color:#3a6ea5">${emoji} Weather</b><br>
+        ${label}<br>${dayNight}<br>
+        Temp: ${tC}\u00b0C / ${tF}\u00b0F<br>
+        <span style="font-size:10px;color:#888">${lat}\u00b0, ${lon}\u00b0 \u00b7 Open-Meteo</span>`)
+      .addTo(map);
+  } catch (e) {
+    if (weatherMarker) { weatherMarker.remove(); weatherMarker = null; }
+    const errIcon = L.divIcon({
+      html: `<div style="background:rgba(60,0,0,0.85);color:#ffb3b3;border:1px solid #a55;
+                  border-radius:6px;padding:3px 7px;font:600 10px 'DM Mono',monospace;
+                  white-space:nowrap;transform:translate(-50%,-50%)">weather unavailable</div>`,
+      className: '', iconSize: [0,0],
+    });
+    weatherMarker = L.marker([c.lat, c.lng], { icon: errIcon, zIndexOffset: 600 }).addTo(map);
+  }
 }
 
 // ── DX SPOTS ─────────────────────────────────────────────────────────────────
