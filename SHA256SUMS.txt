@@ -1,3 +1,4 @@
-b45b141432977986819590c62bc8430d6d00ef506612bb4cf52baad736757e02  HamClockAdvanced-Linux-v3.0.1.tar.gz
-8d1a036df16397f7e6d9201ea001dbfbb0aad1e3343ee0ccbdeab559eac9443e  HamClockAdvanced-Windows-v3.0.1.tar.gz
-6da1e51623f8fcba7006eda01a1357e7a7bff3911e83f4a0e646c299f9c41a9f  HamClock-Fedora-Update-v3.0.1.tar.gz
+c3789141a22d8e15c69c3d370f1adbcbfa3b1eabc2f806da7def1c9ae7039977  HamClockAdvanced-Linux-v3.1.0.tar.gz
+56485edc0b41c780b82dd122dcea6ba99e79649c2211ec8497498309a0191d54  HamClockAdvanced-Windows-v3.1.0.tar.gz
+7fca520ad9f2911c488f94177440513b539337e8e4f48401a5ab8e82b017348f  HamClock-Fedora-Update-v3.1.0.tar.gz
+514bd7f49abc5746ea6e7f7e14e213890ecf829392c1928265c31682ac5f7b39  hamclock-public.html

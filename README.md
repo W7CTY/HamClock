@@ -1,241 +1,130 @@
-# HamClock Advanced
+# HamClock Advanced — v3.1.0
 
-**A full-featured Amateur Radio Operations Center — browser app, native Fedora RPM, and Flatpak.**
+**Amateur Radio Operations Center** by **W7CTY**
+Hosted at **https://github.com/W7CTY/HamClock**
 
-Developed by **W7CTY** · [w7cty@outlook.com](mailto:w7cty@outlook.com)
+A full-featured ham radio dashboard: live PSKReporter DX paths, HF band
+conditions, solar/space weather, an interactive National Geographic propagation
+map with day/night terminator, sun & moon markers, live weather, DX cluster
+spots, world clocks, and a QSO logger with QRZ upload. Runs in any browser, or
+as a native Linux app, or on Windows.
+
+> Note: This is an independent HTML/GTK4 reimplementation — not the upstream
+> HamClock by Elwood Downey (WB0OEW).
 
 ---
 
-## Packages
+## Downloads
 
-| File | Platform | Description |
+| File | Platform | Contents |
 |---|---|---|
-| `hamclock-public.html` | Any browser | Self-contained HTML — no install needed |
-| `hamclock-advanced-1.0.0-1.x86_64.rpm` | Fedora Linux | Native GTK4 app, install with `dnf` |
-| `hamclock-advanced-flatpak-v1.0.0.tar.gz` | Fedora Linux | Flatpak build-from-source package |
+| `HamClockAdvanced-Linux-v3.1.0.tar.gz` | All Linux distros | Fedora installer, Flatpak, Universal, Browser HTML, PDF |
+| `HamClockAdvanced-Windows-v3.1.0.tar.gz` | Windows 10/11 | HTML app, Install/Uninstall .bat, PDF |
+| `HamClock-Fedora-Update-v3.1.0.tar.gz` | Fedora (existing installs) | Self-extracting installer + PDF |
+| `hamclock-public.html` | Any browser | Standalone — open directly, no install |
+
+Verify downloads against `SHA256SUMS.txt`:
+```bash
+sha256sum -c SHA256SUMS.txt
+```
 
 ---
 
-## Browser Version — Quick Start
+## Quick Start
 
-No installation or server required:
-
+### Linux
 ```bash
-open hamclock-public.html       # macOS
-xdg-open hamclock-public.html   # Linux
-start hamclock-public.html      # Windows
-```
-
-Or just double-click the file. Enter your **callsign** and **grid square** in the banner — the map centres on your location automatically.
-
----
-
-## Fedora RPM — Install
-
-```bash
-sudo dnf install hamclock-advanced-1.0.0-1.x86_64.rpm
-```
-
-`dnf` automatically installs all dependencies (`python3-gobject`, `gtk4`, `libadwaita`, `webkitgtk6.0`).
-
-**Launch:**
-```bash
+tar -xzf HamClockAdvanced-Linux-v3.1.0.tar.gz
+cd HamClockAdvanced-Linux-v3.1.0
+# Fedora (recommended):
+chmod +x fedora/install-hamclock-advanced.sh && ./fedora/install-hamclock-advanced.sh
+# Any distro:
+cd universal && tar -xzf hamclock-advanced-linux-v3.1.0.tar.gz
+cd hamclock-advanced-linux && chmod +x install.sh && ./install.sh
+# Or just open browser/HamClockAdvanced.html
 hamclock-advanced
-# or: Activities → HamClock Advanced
 ```
 
-**Uninstall:**
-```bash
-sudo dnf remove hamclock-advanced
+### Windows
+Extract the archive, then double-click **HamClockAdvanced.html** to run, or
+right-click **Install.bat → Run as administrator** for a Desktop shortcut.
 
-# To also remove all previous versions (including any HamClock Improved installs):
-sudo bash /usr/share/hamclock-advanced/uninstall-hamclock.sh
+### Fedora update (existing install)
+```bash
+tar -xzf HamClock-Fedora-Update-v3.1.0.tar.gz
+cd hamclock-update-final2
+chmod +x install-hamclock-advanced.sh && ./install-hamclock-advanced.sh
 ```
 
 ---
 
-## Fedora Flatpak — Install
+## What's New in v3.1.0
 
-> 📄 **Full illustrated install guide:** `INSTALL.pdf` (included in the Flatpak archive)
-
-### Step 1 — Extract the archive
-
-```bash
-cd ~/Downloads
-tar -xzf hamclock-advanced-flatpak-v1.0.0.tar.gz -C ~/Downloads
-cd hamclock-flatpak-fixed
-```
-
-> **Note:** If the filename downloaded with an underscore (`hamclock-advanced-flatpak-v1.0.0_tar.gz`), use that exact name in the `tar` command.
-
-### Step 2 — Run the installer
-
-```bash
-chmod +x install.sh
-./install.sh
-```
-
-The script automatically:
-- Installs `flatpak` and `flatpak-builder` (separate packages — both required)
-- Adds the Flathub repository
-- Installs **GNOME Platform 46** runtime
-- Builds and installs HamClock Advanced
-
-You will be prompted for your `sudo` password once.
-
-### Step 3 — Launch
-
-```bash
-flatpak run org.w7cty.HamClockAdvanced
-# or: Activities → HamClock Advanced
-```
-
-### Flatpak Uninstall
-
-```bash
-flatpak uninstall --user org.w7cty.HamClockAdvanced
-```
-
-### Flatpak Troubleshooting
-
-| Error | Fix |
-|---|---|
-| `flatpak-builder: command not found` | `sudo dnf install -y flatpak-builder` then re-run `./install.sh` |
-| `Cannot mkdir: Permission denied` | Make sure you `cd ~/Downloads` **before** running `tar` |
-| `This version is already installed` | Run `flatpak uninstall --user org.w7cty.HamClockAdvanced` first |
-| GNOME Platform 48 end-of-life warning | Use this package — it targets Platform 46 (supported) |
-| Map tiles not loading | Internet connection required for NatGeo tiles |
+- **Day/night terminator** drawn as a clean curved gray line with soft night-side
+  shading — no hard pole lines
+- **Sun marker** on the daylight side and **Moon marker** (with current phase &
+  illumination) at the sub-lunar point on the night side
+- **Weather button** — live sky conditions and day/night at the map center, for
+  anywhere on Earth, via Open-Meteo (no API key)
+- **Grid square overlay off by default** (toggle on from the map toolbar)
+- **Radio-antenna station icon** replaces the old QTH marker
+- **USA 250 patriotic theme** — red/white/blue with an American flag and
+  "1776–2026 · 250" mark, always on, in both day and night cycles
 
 ---
 
 ## Features
 
-### 📡 Station Identity
-- Editable **Callsign** and **Grid Square** (Maidenhead 2–8 chars)
-- GPS coordinates auto-calculated from grid square; map centres on your location
-- Settings and theme preference saved across sessions
-
-### ☀️ Solar & Space Weather
-- Solar Flux Index (SFI), Sunspot Number (SSN)
-- K-Index, A-Index, X-Ray flare class, Aurora activity
-- Geomagnetic K-Index visual gauge (0–9)
-- Space weather alert bar (Quiet / Unsettled / Storm)
-
-### 📻 HF Band Conditions
-- All bands 160m–6m with **day AND night** propagation quality — always visible side by side
-- Active period highlighted with **NOW** badge and blue accent
-- EXCELLENT / GOOD / FAIR / POOR / CLOSED pills with progress bars; MUF estimates
-
-### 🗺️ Interactive Propagation Map
-- **Esri National Geographic tile layer** — no API key needed
-- Fully zoomable and pannable; auto-centres on your grid square
-- **Gray-line terminator** updated every 60 seconds
-- **Great-circle DX paths** to static beacon stations
-- **Maidenhead grid square** bounding box overlay
-- Floating toolbar (right side): Gray Line · DX Paths · Grid Sq · Recenter · **⤢ Expand**
-- Map expandable to 620 px via toolbar button or ⚙ Settings
-
-### 📊 Live DX Cluster Spots
-- Up to **25 spots** displayed with auto-refresh every 4.5 seconds
-- Band filter: ALL / 160M / 80M / 40M / 20M / 15M / 10M / 6M
-- Mode filter: DX Spots / FT8+FT4 / CW
-- DXCC entity count; new-spot flash animation
-
-### 🕐 World Clocks
-- **Slot 1: UTC** and **Slot 2: Local** (auto-derived from grid longitude) — locked
-- Slots 3–8: **user-selectable** from 24 worldwide timezones
-- Click **✎ EDIT** to add, remove, or change clocks (saved to browser storage)
-
-### 🌅 Sunrise / Sunset
-- Calculated from GPS coordinates derived from grid square
-- Shows rise time, set time, and total day length in UTC
-
-### 📝 Quick QSO Logger
-- **Modes:** FT8, FT4, RTTY, PSK31, JS8, SSB, CW, AM, DMR, D-STAR, C4FM, FM
-- **Operation Type:** N/A, POTA, SOTA, Field Day, Other (free-text)
-- **LOG QSO (LOCAL)** — session counter, no network needed
-- **LOG & UPLOAD TO QRZ** — posts ADIF record to QRZ Logbook API
-
-### ⚙️ Settings — Gear Menu
-- **Dark Mode** toggle (persisted between sessions)
-- **Font Size:** 6 steps — 100% / 115% / 130% / 150% / 175% / **200%**
-- **Expand Map** toggle
-- **QRZ Login & API Key** — connect QRZ Logbook for QSO upload
-- **My Station Settings** — re-open the callsign/grid wizard
-- **Instructions** — full in-app help modal (6 sections)
-- **Share This App** — shareable URL with callsign & grid embedded
-
-### 📰 DX Wire Ticker
-- Scrolling ticker bar always displayed in **bright gold** text on **black** background
-- **Red border** (top and bottom) — consistent in both light and dark mode
-
-### 📱 Responsive Layout
-- Single-column at ≤ 900 px; extra-compact at ≤ 480 px
-- Pinch-to-zoom on touch devices
+- HF band conditions 160m–6m, day AND night quality always visible
+- Solar indices: SFI, SSN, K-index, A-index, X-ray, Aurora
+- Interactive NatGeo propagation map with real-time gray line
+- DX cluster spots (up to 25) with band/mode filtering
+- World clocks: UTC + local (auto from grid) + 6 user slots
+- QSO logger: FT8/FT4, SSB, CW, DMR, D-STAR, C4FM, FM, RTTY, PSK31; POTA/SOTA/Field Day
+- QRZ Logbook API upload
+- Font size 100–200%, expandable map, dark/light theme
 
 ---
 
-## Keyboard Shortcuts (Fedora Native App)
+## Security
 
-| Key | Action |
+Every release passes a deep pre-publish audit (see `PRE-PUBLISH-CHECKLIST.md`):
+- Content-Security-Policy restricting script/connect/image origins
+- All user input (callsign, grid, URL params) sanitized; XSS-safe DOM throughout
+- HTTPS-only external APIs
+- Shell installers use `set -euo pipefail` and valid `chmod` octal modes
+- base64 install payloads verified to decode to the expected files
+
+---
+
+## Updating
+
+HamClock Advanced checks GitHub for new releases on launch and shows a banner
+when an update is available. To update:
+
+| Method | Command |
 |---|---|
-| `F5` | Reload |
-| `F11` | Toggle fullscreen |
-| `Esc` | Exit fullscreen |
-| `Ctrl +` | Zoom in |
-| `Ctrl −` | Zoom out |
-| `Ctrl 0` | Reset zoom |
-| `Ctrl R` | Reload |
-| `Ctrl Q` | Quit |
+| Fedora / RPM / Universal | `hamclock-advanced --update` |
+| Flatpak | `flatpak update org.w7cty.HamClockAdvanced` |
+| Windows | Download the latest release and run `Install.bat` again |
+| Any | Download from https://github.com/W7CTY/HamClock/releases/latest |
+
+The in-app check is read-only — it never downloads or installs anything on its
+own. Updates are always applied only when you choose to. Disable the check with
+`HAMCLOCK_NO_UPDATE_CHECK=1`.
 
 ---
 
-## Requirements
+## Uninstall
 
-### Browser version
-| Requirement | Details |
+| Method | Command |
 |---|---|
-| Browser | Chrome 90+, Firefox 88+, Safari 14+, Edge 90+ |
-| Internet | NatGeo map tiles and Google Fonts; core features work offline |
-| Server | None |
-
-### Fedora RPM / Flatpak
-| Package | Version |
-|---|---|
-| `python3` | 3.8+ |
-| `python3-gobject` | any |
-| `gtk4` | any |
-| `libadwaita` | any |
-| `webkitgtk6.0` | Fedora 38–44 (2.40–2.52.x) |
+| Fedora / RPM / Universal | `hamclock-advanced --uninstall` |
+| Fedora self-extracting | `sudo bash /usr/share/hamclock-advanced/uninstall-hamclock.sh` |
+| Flatpak | `flatpak uninstall --user org.w7cty.HamClockAdvanced` |
+| Universal Linux | `sudo bash /opt/hamclock-advanced/uninstall.sh` |
+| Windows | Run `Uninstall.bat` |
 
 ---
 
-## Technical Details
-
-### Grid Square → GPS
-Full Maidenhead system: 2-char (±100 km) → 4-char (±5 km) → 6-char (±500 m) → 8-char (±50 m). Local timezone auto-derived from grid longitude offset.
-
-### QRZ Logbook API
-Endpoint: `https://logbook.qrz.com/api` (POST, URL-encoded). API Access Key only — no username/password. Find your key at **QRZ Logbook → Settings → API Access Key**. CORS handled via direct call first, then three-proxy fallback chain (`allorigins.win` → `corsproxy.io` → `proxy.cors.sh`).
-
-### Map
-Tile provider: Esri National Geographic (`NatGeo_World_Map`). Library: Leaflet.js 1.9.4. Gray-line calculated from solar declination and current UTC. DX paths use 64-point geodesic interpolation.
-
-### Flatpak Runtime
-Uses GNOME Platform **46** (supported LTS). WebKit 6.0 primary, with WebKit 4.1 and 4.0 fallbacks for older Fedora versions.
-
----
-
-## License
-
-© 2026 W7CTY · All Rights Reserved
-
-Personal and non-commercial use permitted. Please credit W7CTY if you share or adapt this work.
-
----
-
-## Contact
-
-**W7CTY** · [w7cty@outlook.com](mailto:w7cty@outlook.com)
-
-*73 de W7CTY — Good DX!*
+© 2026 W7CTY · w7cty@outlook.com · github.com/W7CTY/HamClock · *73 de W7CTY — Good DX!*
